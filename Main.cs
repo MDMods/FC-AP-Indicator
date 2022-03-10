@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
 using Assets.Scripts.GameCore.HostComponent;
@@ -21,7 +20,7 @@ namespace FC_AP
 {
 	public class Main : MelonMod
     {
-		public static bool isBattleScene;
+		public static bool isPlayScene;
 		public static bool Set;
 		public static GameObject FC;
 		public static GameObject AP;
@@ -30,19 +29,20 @@ namespace FC_AP
 			base.OnSceneWasLoaded(buildIndex, sceneName);
 			if (sceneName == "GameMain")
 			{
-				isBattleScene = true;
+				isPlayScene = true;
 			}
 			else
 			{
-				isBattleScene = false;
+				isPlayScene = false;
 			}
 		}
 
 		public override void OnUpdate()
 		{
 			base.OnUpdate();
-			if (isBattleScene)
+			if (isPlayScene)
 			{
+				 // if gameobject not created and is in game
 				if (!Set && Singleton<StageBattleComponent>.instance.isInGame)
                 {
 					SetGameObject();
@@ -56,8 +56,15 @@ namespace FC_AP
 					UnityEngine.Object.Destroy(AP);
 					UnityEngine.Object.Destroy(FC);
 				}
+				// Destroy gameobject in result screen
+				if (GameObject.Find("PnlVictory_2D") != null)
+                {
+					UnityEngine.Object.Destroy(AP);
+					UnityEngine.Object.Destroy(FC);
+				}
 			}
-			if (!isBattleScene)
+			// if not in play scene
+			if (!isPlayScene)
 			{
 				Set = false;
 			}
@@ -66,6 +73,7 @@ namespace FC_AP
 		public static void SetGameObject()
 		{
 			Set = true; // Set to true to prevent infinite loop
+			// create canvas
 			GameObject canvas = new GameObject();
 			Canvas mycanvas;
 			canvas.name = "Indicator Canvas";
@@ -80,13 +88,6 @@ namespace FC_AP
 			FC.transform.position = new Vector3(320f, 778f, 0f);
 			Text FC_text = FC.AddComponent<Text>();
 			FC_text.text = "FC";
-			/*foreach (var @object in Resources.FindObjectsOfTypeAll(Il2CppType.Of<Font>()))
-			{
-				if (@object.name == "Normal")
-				{
-					
-				}
-			}*/
 			GameObject root = GameObject.Find("Forward");
 			FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
 			FC_text.fontSize = 45;
