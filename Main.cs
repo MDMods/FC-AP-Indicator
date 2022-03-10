@@ -8,11 +8,12 @@ using Assets.Scripts.GameCore.HostComponent;
 using Assets.Scripts.PeroTools.Commons;
 using Assets.Scripts.PeroTools.Managers;
 using Assets.Scripts.PeroTools.Nice.Events;
-using Assets.Scripts.PeroTools.Nice.Variables;
 using Assets.Scripts.UI.Panels;
 using Assets.Scripts.UI.Specials;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
+using UnhollowerRuntimeLib;
 using HarmonyLib;
 
 namespace FC_AP
@@ -20,11 +21,10 @@ namespace FC_AP
 	public class Main : MelonMod
     {
 		public static bool isBattleScene;
-        public override void OnApplicationStart()
-        {
-            base.OnApplicationStart();
-		}
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+		public static bool Set;
+		public static GameObject FC;
+		public static GameObject AP;
+		public override void OnSceneWasLoaded(int buildIndex, string sceneName)
 		{
 			base.OnSceneWasLoaded(buildIndex, sceneName);
 			if (sceneName == "GameMain")
@@ -42,15 +42,66 @@ namespace FC_AP
 			base.OnUpdate();
 			if (isBattleScene)
 			{
+				if (!Set)
+                {
+					SetGameObject();
+				}
 				if (Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
 				{
-					Singleton<EventManager>.instance.Invoke("Game/Restart", null);
+                    UnityEngine.Object.Destroy(AP);
 				}
-				if (Singleton<TaskStageTarget>.instance.m_MissResult != 0)
+				if (Singleton<TaskStageTarget>.instance.m_MissResult != 0 || Singleton<TaskStageTarget>.instance.m_MissCombo != 0)
 				{
-					Singleton<EventManager>.instance.Invoke("Game/Restart", null);
+					UnityEngine.Object.Destroy(AP);
+					UnityEngine.Object.Destroy(FC);
 				}
 			}
+			if (!isBattleScene)
+			{
+				Set = false;
+			}
+		}
+
+		public static void SetGameObject()
+		{
+			Set = true; // Set to true to prevent infinite loop
+			GameObject canvas = new GameObject();
+			Canvas mycanvas;
+			canvas.name = "Indicator Canvas";
+			canvas.AddComponent<Canvas>();
+			canvas.AddComponent<CanvasScaler>();
+			canvas.AddComponent<GraphicRaycaster>();
+			mycanvas = canvas.GetComponent<Canvas>();
+			mycanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			// FC Gameobject
+			FC = new GameObject("FC");
+			FC.transform.SetParent(canvas.transform);
+			FC.transform.position = new Vector3(320f, 778f, 0f);
+			Text FC_text = FC.AddComponent<Text>();
+			FC_text.text = "FC";
+			/*foreach (var @object in Resources.FindObjectsOfTypeAll(Il2CppType.Of<Font>()))
+			{
+				if (@object.name == "Normal")
+				{
+					
+				}
+			}*/
+			GameObject root = GameObject.Find("Forward");
+			FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+			FC_text.fontSize = 45;
+			FC_text.color = Color.blue;
+			FC_text.transform.position = new Vector3(320f,778f,0f);
+			// AP Gameobject
+			AP = new GameObject("AP");
+			AP.transform.SetParent(canvas.transform);
+			AP.transform.position = new Vector3(400f, 778f, 0f);
+			Text AP_text = AP.AddComponent<Text>();
+			AP_text.text = "AP";
+			AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+			AP_text.fontSize = 45;
+			AP_text.color = Color.yellow;
+			AP_text.transform.position = new Vector3(400f, 778f, 0f);
+
 		}
 	}
 	/*public class ToggleManager
