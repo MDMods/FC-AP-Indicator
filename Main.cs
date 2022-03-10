@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MelonLoader;
 using Assets.Scripts.GameCore.HostComponent;
 using Assets.Scripts.PeroTools.Commons;
+using FormulaBase;
 using Assets.Scripts.PeroTools.Managers;
 using Assets.Scripts.PeroTools.Nice.Events;
 using Assets.Scripts.UI.Panels;
@@ -42,7 +43,7 @@ namespace FC_AP
 			base.OnUpdate();
 			if (isBattleScene)
 			{
-				if (!Set)
+				if (!Set && Singleton<StageBattleComponent>.instance.isInGame)
                 {
 					SetGameObject();
 				}
