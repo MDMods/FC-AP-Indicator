@@ -85,24 +85,24 @@ namespace FC_AP
 			// FC Gameobject
 			FC = new GameObject("FC");
 			FC.transform.SetParent(canvas.transform);
-			FC.transform.position = new Vector3(320f, 778f, 0f);
+			FC.transform.position = new Vector3(Screen.width * 17 / 80, Screen.height * 39 / 45, 0f);
 			Text FC_text = FC.AddComponent<Text>();
 			FC_text.text = "FC";
 			GameObject root = GameObject.Find("Forward");
 			FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
 			FC_text.fontSize = 45;
 			FC_text.color = Color.blue;
-			FC_text.transform.position = new Vector3(320f,778f,0f);
+			FC_text.transform.position = new Vector3(Screen.width * 17 / 80, Screen.height * 39 / 45, 0f);
 			// AP Gameobject
 			AP = new GameObject("AP");
 			AP.transform.SetParent(canvas.transform);
-			AP.transform.position = new Vector3(400f, 778f, 0f);
+			AP.transform.position = new Vector3(Screen.width * 21 / 80, Screen.height * 39 / 45, 0f);
 			Text AP_text = AP.AddComponent<Text>();
 			AP_text.text = "AP";
 			AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
 			AP_text.fontSize = 45;
 			AP_text.color = Color.yellow;
-			AP_text.transform.position = new Vector3(400f, 778f, 0f);
+			AP_text.transform.position = new Vector3(Screen.width * 21 / 80, Screen.height * 39 / 45, 0f);
 
 		}
 	}
