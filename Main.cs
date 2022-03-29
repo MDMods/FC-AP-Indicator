@@ -24,6 +24,10 @@ namespace FC_AP
 		public static bool Set;
 		public static GameObject FC;
 		public static GameObject AP;
+		static bool IsAP;
+		static bool IsFC;
+		static GameObject canvas;
+		static Canvas mycanvas;
 		public override void OnSceneWasLoaded(int buildIndex, string sceneName)
 		{
 			base.OnSceneWasLoaded(buildIndex, sceneName);
@@ -45,13 +49,16 @@ namespace FC_AP
 				 // if gameobject not created and is in game
 				if (!Set && Singleton<StageBattleComponent>.instance.isInGame)
                 {
-					SetGameObject();
+					SetCanvas();
+					SetAP_GameObject();
 				}
-				if (Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
+				if (IsAP && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
 				{
+					IsAP = false;
                     UnityEngine.Object.Destroy(AP);
+					SetFC_GameObject();
 				}
-				if (Singleton<TaskStageTarget>.instance.m_MissResult != 0 || Singleton<TaskStageTarget>.instance.m_MissCombo != 0)
+				if (IsFC && Singleton<TaskStageTarget>.instance.m_MissResult != 0 || Singleton<TaskStageTarget>.instance.m_MissCombo != 0)
 				{
 					UnityEngine.Object.Destroy(AP);
 					UnityEngine.Object.Destroy(FC);
@@ -70,41 +77,50 @@ namespace FC_AP
 			}
 		}
 
-		public static void SetGameObject()
+		 public static void SetCanvas()
 		{
-			Set = true; // Set to true to prevent infinite loop
-			// create canvas
-			GameObject canvas = new GameObject();
-			Canvas mycanvas;
+			canvas = new GameObject();
 			canvas.name = "Indicator Canvas";
 			canvas.AddComponent<Canvas>();
 			canvas.AddComponent<CanvasScaler>();
 			canvas.AddComponent<GraphicRaycaster>();
 			mycanvas = canvas.GetComponent<Canvas>();
 			mycanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-			// FC Gameobject
-			FC = new GameObject("FC");
-			FC.transform.SetParent(canvas.transform);
-			FC.transform.position = new Vector3(Screen.width * 17 / 80, Screen.height * 39 / 45, 0f);
-			Text FC_text = FC.AddComponent<Text>();
-			FC_text.text = "FC";
-			GameObject root = GameObject.Find("Forward");
-			FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
-			FC_text.fontSize = 45;
-			FC_text.color = Color.blue;
-			FC_text.transform.position = new Vector3(Screen.width * 17 / 80, Screen.height * 39 / 45, 0f);
+		} 
+		public static void SetAP_GameObject()
+		{
+			Set = true; // Set to true to prevent infinite loop
+			IsAP = true;
+			GameObject icanvas = GameObject.Find("Indicator Canvas");
 			// AP Gameobject
 			AP = new GameObject("AP");
-			AP.transform.SetParent(canvas.transform);
-			AP.transform.position = new Vector3(Screen.width * 21 / 80, Screen.height * 39 / 45, 0f);
-			Text AP_text = AP.AddComponent<Text>();
-			AP_text.text = "AP";
-			AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
-			AP_text.fontSize = 45;
-			AP_text.color = Color.yellow;
-			AP_text.transform.position = new Vector3(Screen.width * 21 / 80, Screen.height * 39 / 45, 0f);
-
+            AP.transform.SetParent(icanvas.transform);
+            AP.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
+            Text AP_text = AP.AddComponent<Text>();
+            AP_text.text = "AP";
+            GameObject root = GameObject.Find("Forward");
+            AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+            AP_text.fontSize = 72 * Screen.height / 1080;
+            AP_text.color = Color.yellow;
+            AP_text.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
 		}
+
+		 public static void SetFC_GameObject()
+		{
+			IsFC = true;
+			GameObject icanvas = GameObject.Find("Indicator Canvas");
+			// FC Gameobject
+			FC = new GameObject("FC");
+            FC.transform.SetParent(canvas.transform);
+            FC.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
+            Text FC_text = FC.AddComponent<Text>();
+            FC_text.text = "FC";
+            GameObject root = GameObject.Find("Forward");
+            FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+            FC_text.fontSize = 72 * Screen.height / 1080;
+            FC_text.color = new Color(105 / 255f, 211 / 255f, 255 / 255f, 255 / 255f);
+            FC_text.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
+		} 
 	}
 	/*public class ToggleManager
 	{
