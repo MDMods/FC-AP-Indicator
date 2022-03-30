@@ -8,6 +8,7 @@ using Assets.Scripts.PeroTools.Commons;
 using FormulaBase;
 using Assets.Scripts.PeroTools.Managers;
 using Assets.Scripts.PeroTools.Nice.Events;
+using Assets.Scripts.PeroTools.Nice.Variables;
 using Assets.Scripts.UI.Panels;
 using Assets.Scripts.UI.Specials;
 using UnityEngine;
@@ -28,7 +29,13 @@ namespace FC_AP
 		static bool IsFC;
 		static GameObject canvas;
 		static Canvas mycanvas;
-		public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+
+        public override void OnApplicationStart()
+        {
+            base.OnApplicationStart();
+			ToggleSave.Load();
+        }
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
 		{
 			base.OnSceneWasLoaded(buildIndex, sceneName);
 			if (sceneName == "GameMain")
@@ -47,7 +54,7 @@ namespace FC_AP
 			if (isPlayScene)
 			{
 				 // if gameobject not created and is in game
-				if (!Set && Singleton<StageBattleComponent>.instance.isInGame)
+				if (!Set && ToggleManager.FC_AP && Singleton<StageBattleComponent>.instance.isInGame)
                 {
 					SetCanvas();
 					SetAP_GameObject();
@@ -68,6 +75,14 @@ namespace FC_AP
                 {
 					UnityEngine.Object.Destroy(AP);
 					UnityEngine.Object.Destroy(FC);
+				}
+				if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
+					{
+						Singleton<EventManager>.instance.Invoke("Game/Restart", null);
+					}
+				if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_MissResult != 0)
+				{
+					Singleton<EventManager>.instance.Invoke("Game/Restart", null);
 				}
 			}
 			// if not in play scene
@@ -96,10 +111,10 @@ namespace FC_AP
 			AP = new GameObject("AP");
             AP.transform.SetParent(icanvas.transform);
             AP.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
-            Text AP_text = AP.AddComponent<Text>();
+            UnityEngine.UI.Text AP_text = AP.AddComponent<UnityEngine.UI.Text>();
             AP_text.text = "AP";
             GameObject root = GameObject.Find("Forward");
-            AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+            AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<UnityEngine.UI.Text>().font;
             AP_text.fontSize = 72 * Screen.height / 1080;
             AP_text.color = Color.yellow;
             AP_text.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
@@ -113,100 +128,104 @@ namespace FC_AP
 			FC = new GameObject("FC");
             FC.transform.SetParent(canvas.transform);
             FC.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
-            Text FC_text = FC.AddComponent<Text>();
+			UnityEngine.UI.Text FC_text = FC.AddComponent<UnityEngine.UI.Text>();
             FC_text.text = "FC";
             GameObject root = GameObject.Find("Forward");
-            FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
+            FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<UnityEngine.UI.Text>().font;
             FC_text.fontSize = 72 * Screen.height / 1080;
             FC_text.color = new Color(105 / 255f, 211 / 255f, 255 / 255f, 255 / 255f);
             FC_text.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
 		} 
 	}
-	/*public class ToggleManager
+	public class ToggleManager
 	{
 		public static GameObject FC_APToggle;
 		public static GameObject RestartToggle;
-		public static GameObject Vselect;
+		public static GameObject vSelect;
+		public static PnlStage stage;
+		public static bool FC_AP;
+		public static bool Restart;
 
-		public static void SetUpFC_APToggle()
+		public static void FC_AP_On()
         {
-			FC_APToggle.name = "FC AP Indicator Toggle";
-			UnityEngine.UI.Text component = FC_APToggle.transform.Find("Txt").GetComponent<UnityEngine.UI.Text>();
-			Image component2 = FC_APToggle.transform.Find("Background").GetComponent<Image>();
-			Image component3 = FC_APToggle.transform.Find("Background").GetChild(0).GetComponent<Image>();
-			Toggle component4 = FC_APToggle.GetComponent<Toggle>();
-			FC_APToggle.transform.position = new Vector3(20f, -5f, 100f);
-			FC_APToggle.GetComponent<OnToggle>().enabled = false;
-			FC_APToggle.GetComponent<OnToggleOn>().enabled = false;
-			FC_APToggle.GetComponent<OnActivate>().enabled = false;
-			FC_APToggle.GetComponent<VariableBehaviour>().enabled = false;
-			component4.SetIsOnWithoutNotify(ToggleSave.FC_APEnabled);
-			component4.group = null;
-			/*component4.onValueChanged.AddListener(delegate (bool val)
-			{
-				ToggleSave.FC_APEnabled = val;
-				if (val)
-				{
-					
-				}
-				else
-				{
-					
-				}
-			});
-			component.text = "FC AP Indicator";
-			component.color = new Color(1f, 1f, 1f, 0.298f);
-			RectTransform rectTransform = component.transform.Cast<RectTransform>();
-			Vector2 offsetMax = rectTransform.offsetMax;
-			rectTransform.offsetMax = new Vector2(component.preferredWidth + 10f, offsetMax.y);
-			component2.color = new Color(0.23529412f, 0.15686275f, 0.43529412f);
-			component3.color = new Color(0.40392157f, 0.3647059f, 0.50980395f);
-		}
-		public static void SetUpRestartToggle()
+			FC_AP = true;
+        }
+		public static void FC_AP_Off()
+        {
+			FC_AP = false;
+        }
+		public static void Restart_On()
+        {
+			Restart = true;
+        }
+		public static void Restart_Off()
+        {
+			Restart = false;
+        }
+		public static void SetupFC_APToggle()
 		{
-			FC_APToggle.name = "Restart Toggle";
-			UnityEngine.UI.Text component = FC_APToggle.transform.Find("Txt").GetComponent<UnityEngine.UI.Text>();
-			Image component2 = FC_APToggle.transform.Find("Background").GetComponent<Image>();
-			Image component3 = FC_APToggle.transform.Find("Background").GetChild(0).GetComponent<Image>();
-			Toggle component4 = FC_APToggle.GetComponent<Toggle>();
-			FC_APToggle.transform.position = new Vector3(20f, -5f, 100f);
+			FC_APToggle.name = "FC AP Indicator Toggle";
+
+			var txt = FC_APToggle.transform.Find("Txt").GetComponent<UnityEngine.UI.Text>();
+			var checkBox = FC_APToggle.transform.Find("Background").GetComponent<Image>();
+			var checkMark = FC_APToggle.transform.Find("Background").GetChild(0).GetComponent<Image>();
+			var toggleComp = FC_APToggle.GetComponent<Toggle>();
+
+			FC_APToggle.transform.position = new Vector3(3.5f, -5f, 100f);
 			FC_APToggle.GetComponent<OnToggle>().enabled = false;
 			FC_APToggle.GetComponent<OnToggleOn>().enabled = false;
 			FC_APToggle.GetComponent<OnActivate>().enabled = false;
 			FC_APToggle.GetComponent<VariableBehaviour>().enabled = false;
-			component4.SetIsOnWithoutNotify(ToggleSave.RestartEnabled);
-			component4.group = null;
-			/*component4.onValueChanged.AddListener(delegate (bool val)
+
+			toggleComp.group = null;
+			toggleComp.SetIsOnWithoutNotify(ToggleSave.FC_APEnabled);
+			toggleComp.onValueChanged.AddListener((UnityEngine.Events.UnityAction<bool>)((val) => {
+				ToggleSave.FC_APEnabled = val;
+				if (val) FC_AP_On();
+				else FC_AP_Off();
+			}));
+
+			txt.text = "FC/AP On/Off";
+			txt.color = new Color(1, 1, 1, 0.298f);
+			var rect = txt.transform.Cast<RectTransform>();
+			var vect = rect.offsetMax;
+			rect.offsetMax = new Vector2(txt.preferredWidth + 10, vect.y);
+
+			checkBox.color = new Color(60 / 255f, 40 / 255f, 111 / 255f);
+			checkMark.color = new Color(103 / 255f, 93 / 255f, 130 / 255f);
+		}
+		public static void SetupRestartToggle()
+		{
+			RestartToggle.name = "Restart Toggle";
+
+			var txt = RestartToggle.transform.Find("Txt").GetComponent<UnityEngine.UI.Text>();
+			var checkBox = RestartToggle.transform.Find("Background").GetComponent<Image>();
+			var checkMark = RestartToggle.transform.Find("Background").GetChild(0).GetComponent<Image>();
+			var toggleComp = RestartToggle.GetComponent<Toggle>();
+
+			RestartToggle.transform.position = new Vector3(6.5f, -5f, 100f);
+			RestartToggle.GetComponent<OnToggle>().enabled = false;
+			RestartToggle.GetComponent<OnToggleOn>().enabled = false;
+			RestartToggle.GetComponent<OnActivate>().enabled = false;
+			RestartToggle.GetComponent<VariableBehaviour>().enabled = false;
+
+			toggleComp.group = null;
+			toggleComp.SetIsOnWithoutNotify(ToggleSave.RestartEnabled);
+			toggleComp.onValueChanged.AddListener((UnityEngine.Events.UnityAction<bool>)((val) =>
 			{
 				ToggleSave.RestartEnabled = val;
-				if (val)
-				{
-					
-				}
-				else
-				{
-					
-				}
-			});
-			component.text = "Restart";
-			component.color = new Color(1f, 1f, 1f, 0.298f);
-			RectTransform rectTransform = component.transform.Cast<RectTransform>();
-			Vector2 offsetMax = rectTransform.offsetMax;
-			rectTransform.offsetMax = new Vector2(component.preferredWidth + 10f, offsetMax.y);
-			component2.color = new Color(0.23529412f, 0.15686275f, 0.43529412f);
-			component3.color = new Color(0.40392157f, 0.3647059f, 0.50980395f);
-		}
+				if (val) Restart_On();
+				else Restart_Off();
+			}));
 
-		public static void Restart()
-        {
-			if (Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
-			{
-				Singleton<EventManager>.instance.Invoke("Game/Restart", null);
-			}
-			if (Singleton<TaskStageTarget>.instance.m_MissResult != 0)
-			{
-				Singleton<EventManager>.instance.Invoke("Game/Restart", null);
-			}
+			txt.text = "Auto Restart On/Off";
+			txt.color = new Color(1, 1, 1, 0.298f);
+			var rect = txt.transform.Cast<RectTransform>();
+			var vect = rect.offsetMax;
+			rect.offsetMax = new Vector2(txt.preferredWidth + 10, vect.y);
+
+			checkBox.color = new Color(60 / 255f, 40 / 255f, 111 / 255f);
+			checkMark.color = new Color(103 / 255f, 93 / 255f, 130 / 255f);
 		}
 	}
 
@@ -214,7 +233,18 @@ namespace FC_AP
 	internal class Patch
     {
 		private static void Postfix(PnlStage __instance)
-        {
+		{
+			ToggleManager.stage = __instance;
+			bool fc_apEnabled = ToggleSave.FC_APEnabled;
+			bool restartEnabled = ToggleSave.RestartEnabled;
+			if (fc_apEnabled)
+			{
+				ToggleManager.FC_AP_On();
+			}
+			if (restartEnabled)
+            {
+				ToggleManager.Restart_On();
+            }
 			GameObject vSelect = null;
 			foreach (Il2CppSystem.Object @object in __instance.transform.parent.parent.Find("Forward"))
 			{
@@ -224,27 +254,26 @@ namespace FC_AP
 					vSelect = transform.gameObject;
 				}
 			}
-			ToggleManager.Vselect = vSelect;
-			if (ToggleManager.FC_APToggle == null && ToggleManager.Vselect != null)
-            {
-				GameObject FC_APToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.Vselect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-				ToggleManager.FC_APToggle = FC_APToggle;
-				ToggleManager.SetUpFC_APToggle();
-			}
-			if (ToggleManager.RestartToggle == null && ToggleManager.Vselect != null)
+			ToggleManager.vSelect = vSelect;
+			if (ToggleManager.FC_APToggle == null && ToggleManager.vSelect != null)
 			{
-				GameObject RestartToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.Vselect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-				ToggleManager.RestartToggle = RestartToggle;
-				ToggleManager.SetUpFC_APToggle();
+				GameObject fc_apToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
+				ToggleManager.FC_APToggle = fc_apToggle;
+				ToggleManager.SetupFC_APToggle();
+			}
+			if (ToggleManager.RestartToggle == null && ToggleManager.vSelect != null)
+			{
+				GameObject restartToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
+				ToggleManager.RestartToggle = restartToggle;
+				ToggleManager.SetupRestartToggle();
 			}
 		}
 
-	}*/
+	}
 
-	/*[HarmonyPatch(typeof(VolumeSelect), MethodType.Constructor)]
+	[HarmonyPatch(typeof(VolumeSelect), MethodType.Constructor)]
 	internal class VolumeCtorPatch
 	{
-		// Token: 0x0600000F RID: 15 RVA: 0x000026BA File Offset: 0x000008BA
 		private static void Postfix(VolumeSelect __instance)
 		{
 		}
@@ -280,8 +309,8 @@ namespace FC_AP
 		{
 			ToggleCategory = MelonPreferences.CreateCategory("FC AP");
 			ToggleCategory.SetFilePath("UserData/FC AP.cfg", true);
-			fc_apEnabled = MelonPreferences.CreateEntry<bool>("FC AP", "fc_apEnabled", false, null, "Whether the FC AP indicator checkbox is enabled.", false, false, null);
-			restartEnabled = MelonPreferences.CreateEntry<bool>("Restart", "restartEnabled", false, null, "Whether the restart checkbox is enabled.", false, false, null);
+			fc_apEnabled = MelonPreferences.CreateEntry<bool>("FC AP", "fc_apEnabled", false, null, "Whether the FC AP indicator is enabled.", false, false, null);
+			restartEnabled = MelonPreferences.CreateEntry<bool>("Restart", "restartEnabled", false, null, "Whether the auto restart is enabled.", false, false, null);
 		}
 
 		public static MelonPreferences_Category ToggleCategory;
@@ -289,5 +318,5 @@ namespace FC_AP
 		public static MelonPreferences_Entry<bool> fc_apEnabled;
 
 		public static MelonPreferences_Entry<bool> restartEnabled;
-	}*/
+	}
 }
