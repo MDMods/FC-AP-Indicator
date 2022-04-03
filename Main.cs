@@ -15,8 +15,8 @@ namespace FC_AP
         public static bool HiddenMiss;
         public static GameObject FC;
         public static GameObject AP;
-        private static bool IsAP = true;
-        private static bool IsFC = true;
+        private static bool IsAP;
+        private static bool IsFC;
         private static GameObject canvas;
         private static Canvas mycanvas;
         public static Main instance;
@@ -103,6 +103,7 @@ namespace FC_AP
         private static void SetAP_GameObject()
         {
             Set = true; // Set to true to prevent infinite loop
+            IsAP = true;
             GameObject icanvas = GameObject.Find("Indicator Canvas");
             // AP Gameobject
             AP = new GameObject("AP");
@@ -119,6 +120,7 @@ namespace FC_AP
 
         private static void SetFC_GameObject()
         {
+            IsFC = true;
             GameObject icanvas = GameObject.Find("Indicator Canvas");
             // FC Gameobject
             FC = new GameObject("FC");
