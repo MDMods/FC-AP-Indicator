@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using MelonLoader;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using MelonLoader;
 
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
@@ -23,7 +22,7 @@ using MelonLoader;
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
 [assembly: Guid("6ea4c889-11b7-48de-a6dc-d8a49ab0b5b2")]
 
-// 程序集的版本信息由下列四个值组成: 
+// 程序集的版本信息由下列四个值组成:
 //
 //      主版本
 //      次版本
@@ -36,4 +35,4 @@ using MelonLoader;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: MelonInfo(typeof(FC_AP.Main), "FC AP indicator", "1.0.0", "lxy")]
-[assembly: MelonGame("PeroPeroGames", "MuseDash")]
+[assembly: MelonGame("PeroPeroGames", "MuseDash")] 
