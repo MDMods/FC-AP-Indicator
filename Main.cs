@@ -13,6 +13,9 @@ namespace FC_AP
         public static bool isPlayScene;
         public static bool Set;
         public static bool HiddenMiss;
+        public static bool IsRestarted;
+        public static bool MainScene;
+        public static bool Preparation;
         public static GameObject FC;
         public static GameObject AP;
         private static bool IsAP;
@@ -36,6 +39,14 @@ namespace FC_AP
             else
             {
                 isPlayScene = false;
+            }
+            if (sceneName == "UISystem_PC")
+            {
+                MainScene = true;
+            }
+            else
+            {
+                MainScene = false;
             }
         }
 
@@ -70,12 +81,14 @@ namespace FC_AP
                     Object.Destroy(AP);
                     Object.Destroy(FC);
                 }
-                if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
+                if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0 && !IsRestarted)
                 {
+                    IsRestarted = true;
                     Singleton<EventManager>.instance.Invoke("Game/Restart", null);
                 }
-                if (ToggleManager.Restart && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0))
+                if (ToggleManager.Restart && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0) && !IsRestarted)
                 {
+                    IsRestarted = true;
                     Singleton<EventManager>.instance.Invoke("Game/Restart", null);
                 }
             }
@@ -86,6 +99,23 @@ namespace FC_AP
                 HiddenMiss = false;
                 IsAP = true;
                 IsFC = true;
+                IsRestarted = false;
+            }
+            if (MainScene)
+            {
+                // remove toggles on preparation screen
+                if (GameObject.Find("PnlPreparation") && !Preparation)
+                {
+                    Preparation = true;
+                    ToggleManager.FC_APToggle.SetActive(false);
+                    ToggleManager.RestartToggle.SetActive(false);
+                }
+                else if (!GameObject.Find("PnlPreparation") && Preparation)
+                {
+                    Preparation = false;
+                    ToggleManager.FC_APToggle.SetActive(true);
+                    ToggleManager.RestartToggle.SetActive(true);
+                }
             }
         }
 
