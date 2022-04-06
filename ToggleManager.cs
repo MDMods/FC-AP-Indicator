@@ -60,7 +60,7 @@ namespace FC_AP
             }));
 
             txt.text = "FC/AP On/Off";
-            txt.fontSize = 35;
+            txt.fontSize = 40;
             txt.color = new Color(1, 1, 1, 0.298f);
             var rect = txt.transform.Cast<RectTransform>();
             var vect = rect.offsetMax;
@@ -95,7 +95,7 @@ namespace FC_AP
             }));
 
             txt.text = "Auto Restart On/Off";
-            txt.fontSize = 35;
+            txt.fontSize = 40;
             txt.color = new Color(1, 1, 1, 0.298f);
             var rect = txt.transform.Cast<RectTransform>();
             var vect = rect.offsetMax;
