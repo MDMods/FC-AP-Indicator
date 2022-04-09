@@ -35,6 +35,7 @@ namespace FC_AP
             if (sceneName == "GameMain")
             {
                 isPlayScene = true;
+                Preparation = false;
             }
             else
             {
@@ -104,13 +105,13 @@ namespace FC_AP
             if (MainScene)
             {
                 // remove toggles on preparation screen
-                if (GameObject.Find("PnlPreparation") && !Preparation)
+                if (!Preparation && GameObject.Find("PnlPreparation"))
                 {
                     Preparation = true;
                     ToggleManager.FC_APToggle.SetActive(false);
                     ToggleManager.RestartToggle.SetActive(false);
                 }
-                else if (!GameObject.Find("PnlPreparation") && Preparation)
+                else if (Preparation && !GameObject.Find("PnlPreparation"))
                 {
                     Preparation = false;
                     ToggleManager.FC_APToggle.SetActive(true);
