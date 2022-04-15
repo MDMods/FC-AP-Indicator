@@ -35,6 +35,7 @@ namespace FC_AP
             if (sceneName == "GameMain")
             {
                 isPlayScene = true;
+                // not in preparation screen
                 Preparation = false;
             }
             else
@@ -61,14 +62,14 @@ namespace FC_AP
                     SetCanvas();
                     SetAP_GameObject();
                 }
-                // if still AP and find a great
+                // if still AP and get a great
                 if (IsAP && IsFC && ToggleManager.FC_AP && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
                 {
                     IsAP = false;
                     Object.Destroy(AP);
                     SetFC_GameObject();
                 }
-                // if still FC and find a miss
+                // if still AP/FC and get a miss
                 if (IsFC && ToggleManager.FC_AP && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0))
                 {
                     IsAP = false;
@@ -82,11 +83,13 @@ namespace FC_AP
                     Object.Destroy(AP);
                     Object.Destroy(FC);
                 }
+                // Restart when get a great
                 if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0 && !IsRestarted)
                 {
                     IsRestarted = true;
                     Singleton<EventManager>.instance.Invoke("Game/Restart", null);
                 }
+                // Restart when get a miss
                 if (ToggleManager.Restart && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0) && !IsRestarted)
                 {
                     IsRestarted = true;
@@ -102,6 +105,7 @@ namespace FC_AP
                 IsFC = true;
                 IsRestarted = false;
             }
+            // if in main scene
             if (MainScene)
             {
                 // remove toggles on preparation screen
