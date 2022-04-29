@@ -63,7 +63,7 @@ namespace FC_AP
         {
             if (result == 1)
             {
-                Main.HiddenMiss = true;
+                Main.GhostMiss = true;
             }
         }
     }
@@ -76,7 +76,7 @@ namespace FC_AP
         {
             if (result == 0)
             {
-                Main.HiddenMiss = true;
+                Main.CollectableNoteMiss = true;
             }
         }
     }

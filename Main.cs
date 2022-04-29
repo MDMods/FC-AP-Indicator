@@ -12,13 +12,15 @@ namespace FC_AP
     {
         public static bool isPlayScene;
         public static bool Set;
-        public static bool HiddenMiss;
+        public static bool GhostMiss;
+        public static bool CollectableNoteMiss;
         public static bool IsRestarted;
         public static bool MainScene;
         public static bool Preparation;
         public static GameObject FC;
         public static GameObject AP;
         private static bool IsAP;
+        private static bool IsTrueFC;
         private static bool IsFC;
         private static GameObject canvas;
         private static Canvas mycanvas;
@@ -63,19 +65,29 @@ namespace FC_AP
                     SetAP_GameObject();
                 }
                 // if still AP and get a great
-                if (IsAP && IsFC && ToggleManager.FC_AP && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
+                if (IsAP && IsTrueFC && ToggleManager.FC_AP && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
                 {
                     IsAP = false;
                     Object.Destroy(AP);
                     SetFC_GameObject();
                 }
                 // if still AP/FC and get a miss
-                if (IsFC && ToggleManager.FC_AP && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0))
+                if (IsTrueFC && ToggleManager.FC_AP)
                 {
-                    IsAP = false;
-                    IsFC = false;
-                    Object.Destroy(AP);
-                    Object.Destroy(FC);
+                    if (IsFC && ((GhostMiss && !ToggleSave.GhostMissEnabled) || (CollectableNoteMiss && !ToggleSave.CollectableMissEnabled)))
+                    {
+                        IsAP = false;
+                        IsFC = false;
+                        Object.Destroy(AP);
+                        SetFC_GameObject();
+                    }
+                    if (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (GhostMiss && ToggleSave.GhostMissEnabled) || (CollectableNoteMiss && ToggleSave.CollectableMissEnabled))
+                    {
+                        IsAP = false;
+                        IsTrueFC = false;
+                        Object.Destroy(AP);
+                        Object.Destroy(FC);
+                    }
                 }
                 // Destroy gameobject in result screen
                 if (GameObject.Find("PnlVictory_2D") != null)
@@ -84,13 +96,13 @@ namespace FC_AP
                     Object.Destroy(FC);
                 }
                 // Restart when get a great
-                if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0 && !IsRestarted)
+                if (ToggleManager.Restart && Singleton<TaskStageTarget>.instance.m_GreatResult != 0 && !IsRestarted && ToggleSave.GreatRestartEnabled)
                 {
                     IsRestarted = true;
                     Singleton<EventManager>.instance.Invoke("Game/Restart", null);
                 }
                 // Restart when get a miss
-                if (ToggleManager.Restart && (HiddenMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0) && !IsRestarted)
+                if (ToggleManager.Restart && (GhostMiss || CollectableNoteMiss || Singleton<TaskStageTarget>.instance.m_MissCombo != 0) && !IsRestarted && ToggleSave.MissRestartEnabled)
                 {
                     IsRestarted = true;
                     Singleton<EventManager>.instance.Invoke("Game/Restart", null);
@@ -100,8 +112,10 @@ namespace FC_AP
             if (!isPlayScene)
             {
                 Set = false;
-                HiddenMiss = false;
+                GhostMiss = false;
+                CollectableNoteMiss = false;
                 IsAP = true;
+                IsTrueFC = true;
                 IsFC = true;
                 IsRestarted = false;
             }
@@ -138,7 +152,6 @@ namespace FC_AP
         private static void SetAP_GameObject()
         {
             Set = true; // Set to true to prevent infinite loop
-            IsAP = true;
             GameObject icanvas = GameObject.Find("Indicator Canvas");
             // AP Gameobject
             AP = new GameObject("AP");
@@ -155,7 +168,6 @@ namespace FC_AP
 
         private static void SetFC_GameObject()
         {
-            IsFC = true;
             GameObject icanvas = GameObject.Find("Indicator Canvas");
             // FC Gameobject
             FC = new GameObject("FC");
