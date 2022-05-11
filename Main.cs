@@ -24,11 +24,13 @@ namespace FC_AP
         private static bool IsFC;
         private static GameObject canvas;
         private static Canvas mycanvas;
-        public static Main instance;
+
+        //public static Main instance;
 
         public override void OnApplicationStart()
         {
-            instance = this;
+            //instance = this;
+            LoggerInstance.Msg(Screen.height);
             ToggleSave.Load();
         }
 
@@ -156,14 +158,13 @@ namespace FC_AP
             // AP Gameobject
             AP = new GameObject("AP");
             AP.transform.SetParent(icanvas.transform);
-            AP.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
+            AP.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 5, 0f);
             Text AP_text = AP.AddComponent<Text>();
             AP_text.text = "AP";
-            GameObject root = GameObject.Find("Forward");
-            AP_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
-            AP_text.fontSize = 72 * Screen.height / 1080;
+            AP_text.font = Font.CreateDynamicFontFromOSFont("Snaps Taste", 100);
+            AP_text.fontSize = 100 * Screen.height / 1080;
             AP_text.color = Color.yellow;
-            AP_text.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 16, 0f);
+            AP_text.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 5, 0f);
         }
 
         private static void SetFC_GameObject()
@@ -172,14 +173,13 @@ namespace FC_AP
             // FC Gameobject
             FC = new GameObject("FC");
             FC.transform.SetParent(icanvas.transform);
-            FC.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
+            FC.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 5, 0f);
             Text FC_text = FC.AddComponent<Text>();
             FC_text.text = "FC";
-            GameObject root = GameObject.Find("Forward");
-            FC_text.font = root.transform.Find("PnlPause/Bg/ImgBase/ImgBase2/TxtTittle").GetComponent<Text>().font;
-            FC_text.fontSize = 72 * Screen.height / 1080;
+            FC_text.font = Font.CreateDynamicFontFromOSFont("Snaps Taste", 100);
+            FC_text.fontSize = 100 * Screen.height / 1080;
             FC_text.color = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
-            FC_text.transform.position = new Vector3(Screen.width * 17 / 80 + 20, Screen.height * 80 / 90 - 16, 0f);
+            FC_text.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 5, 0f);
         }
 
         /*public void Log(object log)
