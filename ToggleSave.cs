@@ -2,9 +2,9 @@
 
 namespace FC_AP
 {
-    public class ToggleSave
+    internal class ToggleSave
     {
-        public static MelonPreferences_Category ToggleCategory;
+        private static MelonPreferences_Category ToggleCategory;
 
         private static MelonPreferences_Entry<bool> fc_apEnabled;
 
@@ -18,43 +18,43 @@ namespace FC_AP
 
         private static MelonPreferences_Entry<bool> collectableMiss;
 
-        public static bool FC_APEnabled
+        internal static bool FC_APEnabled
         {
             get { return fc_apEnabled.Value; }
             set { fc_apEnabled.Value = value; }
         }
 
-        public static bool RestartEnabled
+        internal static bool RestartEnabled
         {
             get { return restartEnabled.Value; }
             set { restartEnabled.Value = value; }
         }
 
-        public static bool GreatRestartEnabled
+        internal static bool GreatRestartEnabled
         {
             get { return greatRestart.Value; }
             set { greatRestart.Value = value; }
         }
 
-        public static bool MissRestartEnabled
+        internal static bool MissRestartEnabled
         {
             get { return missRestart.Value; }
             set { missRestart.Value = value; }
         }
 
-        public static bool GhostMissEnabled
+        internal static bool GhostMissEnabled
         {
             get { return ghostMiss.Value; }
             set { ghostMiss.Value = value; }
         }
 
-        public static bool CollectableMissEnabled
+        internal static bool CollectableMissEnabled
         {
             get { return collectableMiss.Value; }
             set { collectableMiss.Value = value; }
         }
 
-        public static void Load()
+        internal static void Load()
         {
             ToggleCategory = MelonPreferences.CreateCategory("FC AP");
             ToggleCategory.SetFilePath("UserData/FC AP.cfg", true);
