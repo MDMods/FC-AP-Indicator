@@ -20,8 +20,9 @@ namespace FC_AP
         internal static bool IsRestarted { get; set; }
         private static GameObject FC { get; set; }
         private static GameObject AP { get; set; }
-
         internal static Font font { get; set; }
+
+        private static Color blue = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
 
         public Indicator(IntPtr intPtr) : base(intPtr)
         {
@@ -47,7 +48,7 @@ namespace FC_AP
             {
                 IsAP = false;
                 Destroy(AP);
-                FC = SetGameObject("FC", new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f));
+                FC = SetGameObject("FC", blue);
             }
             // if still AP/FC and get a miss
             if (IsTrueFC && ToggleManager.FC_AP)
@@ -57,7 +58,7 @@ namespace FC_AP
                     IsAP = false;
                     IsFC = false;
                     Destroy(AP);
-                    SetGameObject("FC", new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f));
+                    SetGameObject("FC", blue);
                 }
                 if (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (GhostMiss && ToggleSave.GhostMissEnabled) || (CollectableNoteMiss && ToggleSave.CollectableMissEnabled))
                 {
