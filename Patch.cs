@@ -9,19 +9,8 @@ namespace FC_AP
     [HarmonyPatch(typeof(PnlStage), "Awake")]
     internal class Patch
     {
-        private static void Postfix(PnlStage __instance)
+        private static unsafe void Postfix(PnlStage __instance)
         {
-            ToggleManager.stage = __instance;
-            bool fc_apEnabled = ToggleSave.FC_APEnabled;
-            bool restartEnabled = ToggleSave.RestartEnabled;
-            if (fc_apEnabled)
-            {
-                ToggleManager.FC_AP_On();
-            }
-            if (restartEnabled)
-            {
-                ToggleManager.Restart_On();
-            }
             GameObject vSelect = null;
             foreach (Il2CppSystem.Object @object in __instance.transform.parent.parent.Find("Forward"))
             {
@@ -31,18 +20,23 @@ namespace FC_AP
                     vSelect = transform.gameObject;
                 }
             }
-            ToggleManager.vSelect = vSelect;
-            if (ToggleManager.FC_APToggle == null && ToggleManager.vSelect != null)
+            fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
             {
-                GameObject fc_apToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-                ToggleManager.FC_APToggle = fc_apToggle;
-                ToggleManager.SetupFC_APToggle();
+                if (ToggleManager.FC_APToggle == null && vSelect != null)
+                {
+                    GameObject fc_apToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
+                    ToggleManager.FC_APToggle = fc_apToggle;
+                    ToggleManager.SetupToggle(ToggleManager.FC_APToggle, "FC AP Indicator Toggle", new Vector3(3.5f, -5f, 100f), fc_apEnabled, "FC/AP On/Off");
+                }
             }
-            if (ToggleManager.RestartToggle == null && ToggleManager.vSelect != null)
+            fixed (bool* restartEnabled = &Save.Settings.RestartEnabled)
             {
-                GameObject restartToggle = UnityEngine.Object.Instantiate<GameObject>(ToggleManager.vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-                ToggleManager.RestartToggle = restartToggle;
-                ToggleManager.SetupRestartToggle();
+                if (ToggleManager.RestartToggle == null && vSelect != null)
+                {
+                    GameObject restartToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
+                    ToggleManager.RestartToggle = restartToggle;
+                    ToggleManager.SetupToggle(ToggleManager.RestartToggle, "Restart Toggle", new Vector3(6.5f, -5f, 100f), restartEnabled, "Auto Restart On/Off");
+                }
             }
         }
     }
@@ -63,7 +57,7 @@ namespace FC_AP
         {
             if (result == 1)
             {
-                Indicator.GhostMiss = true;
+                Indicator.GhostMiss++;
             }
         }
     }
@@ -76,7 +70,7 @@ namespace FC_AP
         {
             if (result == 0)
             {
-                Indicator.CollectableNoteMiss = true;
+                Indicator.CollectableNoteMiss++;
             }
         }
     }
