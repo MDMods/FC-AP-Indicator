@@ -11,24 +11,18 @@ namespace FC_AP
 {
     internal class Indicator : MonoBehaviour
     {
-        internal static bool Set { get; set; }
-        internal static bool IsAP { get; set; } //FC with ghost and collectable note miss
-        internal static bool IsTrueFC { get; set; } //FC with no ghost and collectable note miss
-        internal static bool IsFC { get; set; }
+        internal static Font font { get; set; }
+        internal static bool SetAP { get; set; }
+        internal static bool SetFC { get; set; }
+        internal static bool Restarted { get; set; }
+
         internal static int GhostMiss = 0;
         internal static int CollectableNoteMiss = 0;
-        internal static bool IsRestarted { get; set; }
-        private static GameObject FC { get; set; }
         private static GameObject AP { get; set; }
-
-        //private static GameObject Miss { get; set; }
-        internal static Font font { get; set; }
+        private static GameObject FC { get; set; }
+        private static int GreatNum { get; set; }
 
         private static Color blue = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
-
-        private static int GreatNum;
-
-        //private static int MissNum;
 
         public Indicator(IntPtr intPtr) : base(intPtr)
         {
@@ -42,84 +36,59 @@ namespace FC_AP
 
         private void Update()
         {
-            // if gameobject not created and is in game and FC_AP is on
-            if (!Set && Save.Settings.FC_APEnabled && Singleton<StageBattleComponent>.instance.isInGame && GreatNum == 0) //&& MissNum == 0)
+            // if indicator is enabled and not set, also is in game
+            if (Save.Settings.FC_APEnabled && !SetAP && Singleton<StageBattleComponent>.instance.isInGame)
             {
                 SetCanvas();
-                Set = true;
+                SetAP = true;
                 AP = SetGameObject("AP", Color.yellow, "AP");
             }
-            // if still AP and get a great
-            if (IsAP && IsTrueFC && Save.Settings.FC_APEnabled && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)// && MissNum == 0)
+
+            //if AP is set, FC is not set and get a great
+            if (AP != null && !SetFC && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
             {
-                IsAP = false;
                 Destroy(AP);
+                //if not AP then it must be 1 Great
                 GreatNum = 1;
                 FC = SetGameObject("FC", blue, "FC " + GreatNum + "G");
+                SetFC = true;
             }
-            // if still AP/FC and get a miss
-            if (IsTrueFC && Save.Settings.FC_APEnabled)
+
+            //if is AP and FC is not set, ghost and collectable notes are not count as miss when missed
+            if (AP != null && !SetFC && ((!Save.Settings.GhostMissEnabled && GhostMiss != 0) || (!Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
             {
-                if (IsFC && ((GhostMiss != 0 && !Save.Settings.GhostMissEnabled) || (CollectableNoteMiss != 0 && !Save.Settings.CollectableMissEnabled)))
-                {
-                    IsAP = false;
-                    IsFC = false;
-                    Destroy(AP);
-                    FC = SetGameObject("FC", blue, "FC");
-                }
-                if (Singleton<TaskStageTarget>.instance.m_Miss != 0 || (GhostMiss != 0 && Save.Settings.GhostMissEnabled) || (CollectableNoteMiss != 0 && Save.Settings.CollectableMissEnabled))
-                {
-                    IsAP = false;
-                    IsTrueFC = false;
-                    Destroy(AP);
-                    Destroy(FC);
-                    /*MissNum = 1;
-                    if (GreatNum != 0)
-                    {
-                        Miss = Miss = SetGameObject("Miss", Color.grey, GreatNum + "G " + MissNum + "M");
-                    }
-                    else
-                    {
-                        Miss = SetGameObject("Miss", Color.grey, MissNum + "M");
-                    }*/
-                }
+                Destroy(AP);
+                FC = SetGameObject("FC", blue, "FC");
+                SetFC = true;
             }
-            if (Singleton<TaskStageTarget>.instance.m_GreatResult != GreatNum && IsTrueFC)// && MissNum == 0)
+
+            //if AP or FC is set and get normal miss or ghost miss when enabled or collectable note miss when enabled
+            if ((AP != null || FC != null) && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
             {
-                GreatNum = Singleton<TaskStageTarget>.instance.m_GreatResult;
+                Destroy(AP);
                 Destroy(FC);
-                FC = SetGameObject("FC", blue, "FC " + GreatNum + "G");
             }
-            /*if ((Singleton<TaskStageTarget>.instance.m_Miss + GhostMiss + CollectableNoteMiss) != MissNum)
+
+            //if FC is set and great number are not correct then just +1
+            if (FC != null && GreatNum != Singleton<TaskStageTarget>.instance.m_GreatResult)
             {
-                MissNum = Singleton<TaskStageTarget>.instance.m_MissCombo + GhostMiss + CollectableNoteMiss;
-                Destroy(Miss);
-                if (GreatNum != 0)
-                {
-                    Miss = Miss = SetGameObject("Miss", Color.grey, GreatNum + "G " + MissNum + "M");
-                }
-                else
-                {
-                    Miss = SetGameObject("Miss", Color.grey, MissNum + "M");
-                }
-            }*/
-            // Destroy gameobject in result screen
+                GreatNum++;
+                FC.GetComponent<Text>().text = "FC " + GreatNum + "G";
+            }
+
+            //Destroy gameobject in result screen
             if (GameObject.Find("PnlVictory_2D") != null)
             {
                 Destroy(AP);
                 Destroy(FC);
             }
-            // Restart when getting a great
-            if (Save.Settings.RestartEnabled && Singleton<TaskStageTarget>.instance.m_GreatResult != 0 && !IsRestarted && Save.Settings.GreatRestartEnabled)
+
+            //if Restart is enabled and not restarted, get a great when great restart is enabled or get a miss when miss restart is enabled will restart the game
+            //if you set GhostMissEnabled or CollectableMissEnabled as false, then miss these notes will not be count as either Great or Miss, means it wont restart the game
+            if (Save.Settings.RestartEnabled && !Restarted && ((Save.Settings.GreatRestartEnabled && Singleton<TaskStageTarget>.instance.m_GreatResult != 0) || (Save.Settings.MissRestartEnabled && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))))
             {
-                IsRestarted = true;
                 Singleton<EventManager>.instance.Invoke("Game/Restart", null);
-            }
-            // Restart when getting a miss
-            if (Save.Settings.RestartEnabled && (GhostMiss != 0 || CollectableNoteMiss != 0 || Singleton<TaskStageTarget>.instance.m_MissCombo != 0) && !IsRestarted && Save.Settings.MissRestartEnabled)
-            {
-                IsRestarted = true;
-                Singleton<EventManager>.instance.Invoke("Game/Restart", null);
+                Restarted = true;
             }
         }
 
@@ -132,11 +101,10 @@ namespace FC_AP
             Text gameobject_text = gameobject.AddComponent<Text>();
             gameobject_text.text = text;
             gameobject_text.font = font;
-            gameobject_text.fontSize = 85;
+            gameobject_text.fontSize = 100 * Screen.height / 1080;
             gameobject_text.color = color;
-            gameobject_text.transform.position = new Vector3(Screen.width * 5 / 16, Screen.height * 38 / 45 - 15, 0f);
+            gameobject_text.transform.position = new Vector3(Screen.width * 5 / 16, Screen.height * 38 / 45 - 10, 0f);
             RectTransform rectTransform = gameobject_text.GetComponent<RectTransform>();
-            //rectTransform.localPosition = new Vector3(-435, 345, 0);
             rectTransform.sizeDelta = new Vector2(400, 200);
             return gameobject;
         }

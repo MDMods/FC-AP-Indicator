@@ -3,6 +3,9 @@ using Assets.Scripts.GameCore.Managers;
 using Assets.Scripts.UI.Panels;
 using HarmonyLib;
 using UnityEngine;
+using GameLogic;
+using MelonLoader;
+using Assets.Scripts.PeroTools.Commons;
 
 namespace FC_AP
 {
@@ -50,11 +53,15 @@ namespace FC_AP
     }
 
     // ghost miss
-    [HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
+    /*[HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
     internal class SetPlayResultPatch
     {
         private static void Postfix(int idx, byte result, bool isMulStart = false, bool isMulEnd = false, bool isLeft = false)
         {
+            if (result == 0)
+            {
+                Indicator.CollectableNoteMiss++;
+            }
             if (result == 1)
             {
                 Indicator.GhostMiss++;
@@ -71,6 +78,23 @@ namespace FC_AP
             if (result == 0)
             {
                 Indicator.CollectableNoteMiss++;
+            }
+        }
+    }*/
+
+    [HarmonyPatch(typeof(GameMissPlay), "MissCube")]
+    internal class MissCubePatch
+    {
+        private static void Postfix(int idx, decimal currentTick)
+        {
+            int result = Singleton<BattleEnemyManager>.instance.GetPlayResult(idx);
+            if (result == 0)
+            {
+                Indicator.CollectableNoteMiss++;
+            }
+            if (result == 1)
+            {
+                Indicator.GhostMiss++;
             }
         }
     }

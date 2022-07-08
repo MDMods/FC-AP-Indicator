@@ -24,13 +24,11 @@ namespace FC_AP
             }
             else
             {
-                Indicator.Set = false;
+                Indicator.SetAP = false;
+                Indicator.SetFC = false;
+                Indicator.Restarted = false;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
-                Indicator.IsAP = true;
-                Indicator.IsTrueFC = true;
-                Indicator.IsFC = true;
-                Indicator.IsRestarted = false;
                 if (Indicator.font != null)
                 {
                     Addressables.Release(Indicator.font);
