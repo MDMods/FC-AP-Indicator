@@ -7,12 +7,10 @@ namespace FC_AP
 {
     public class Main : MelonMod
     {
-        //public static Main instance;
-
         public override void OnApplicationStart()
         {
-            //instance = this;
-            ToggleSave.Load();
+            Save.Load();
+            LoggerInstance.Msg("FC/AP indicator is loaded!");
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -26,23 +24,18 @@ namespace FC_AP
             }
             else
             {
-                Indicator.Set = false;
-                Indicator.GhostMiss = false;
-                Indicator.CollectableNoteMiss = false;
-                Indicator.IsAP = true;
-                Indicator.IsTrueFC = true;
-                Indicator.IsFC = true;
-                Indicator.IsRestarted = false;
+                Indicator.SetAP = false;
+                Indicator.SetFC = false;
+                Indicator.SetMiss = false;
+                Indicator.Restarted = false;
+                Indicator.GreatNum = 0;
+                Indicator.GhostMiss = 0;
+                Indicator.CollectableNoteMiss = 0;
                 if (Indicator.font != null)
                 {
                     Addressables.Release(Indicator.font);
                 }
             }
         }
-
-        /*public void Log(object log)
-        {
-            LoggerInstance.Msg(log);
-        }*/
     }
 }

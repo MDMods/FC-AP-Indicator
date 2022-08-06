@@ -1,5 +1,5 @@
-﻿using MelonLoader;
-using FC_AP;
+﻿using FC_AP;
+using MelonLoader;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(MelonBuildInfo.Version)]
 [assembly: AssemblyFileVersion(MelonBuildInfo.Version)]
-[assembly: MelonInfo(typeof(FC_AP.Main), MelonBuildInfo.Name, MelonBuildInfo.Version, MelonBuildInfo.Author, MelonBuildInfo.DownloadLink)]
+[assembly: MelonInfo(typeof(FC_AP.Main), MelonBuildInfo.Name, MelonBuildInfo.Version, MelonBuildInfo.Author)]
 [assembly: MelonGame("PeroPeroGames", "MuseDash")]
