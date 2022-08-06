@@ -28,6 +28,7 @@ namespace FC_AP
                 Indicator.SetFC = false;
                 Indicator.SetMiss = false;
                 Indicator.Restarted = false;
+                Indicator.GreatNum = 0;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
                 if (Indicator.font != null)

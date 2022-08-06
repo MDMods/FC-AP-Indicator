@@ -6,8 +6,10 @@ using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using MelonLoader;
 
 namespace FC_AP
+
 {
     internal class Indicator : MonoBehaviour
     {
@@ -16,14 +18,12 @@ namespace FC_AP
         internal static bool SetFC { get; set; }
         internal static bool SetMiss { get; set; }
         internal static bool Restarted { get; set; }
-
-        internal static int GhostMiss = 0;
-        internal static int CollectableNoteMiss = 0;
+        internal static int GreatNum { get; set; }
+        internal static int GhostMiss { get; set; }
+        internal static int CollectableNoteMiss { get; set; }
         private static GameObject AP { get; set; }
         private static GameObject FC { get; set; }
         private static GameObject Miss { get; set; }
-
-        private static int GreatNum { get; set; }
 
         private static Color blue = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
 
@@ -70,7 +70,7 @@ namespace FC_AP
             {
                 Destroy(AP);
                 Destroy(FC);
-                if (GreatNum == 0)
+                if (Singleton<TaskStageTarget>.instance.m_GreatResult == 0)
                 {
                     Miss = SetGameObject("Miss", Color.grey, "");
                 }
@@ -82,16 +82,17 @@ namespace FC_AP
             }
 
             //if FC is set and great number are not correct then just +1
-            if (FC != null && GreatNum != Singleton<TaskStageTarget>.instance.m_GreatResult)
+            if (GreatNum < Singleton<TaskStageTarget>.instance.m_GreatResult)
             {
                 GreatNum++;
-                FC.GetComponent<Text>().text = "FC " + GreatNum + "G";
-            }
-
-            if (Miss != null && GreatNum != Singleton<TaskStageTarget>.instance.m_GreatResult)
-            {
-                GreatNum++;
-                Miss.GetComponent<Text>().text = GreatNum + "G";
+                if (FC != null)
+                {
+                    FC.GetComponent<Text>().text = "FC " + GreatNum + "G";
+                }
+                if (Miss != null)
+                {
+                    Miss.GetComponent<Text>().text = GreatNum + "G";
+                }
             }
 
             //Destroy gameobject in result screen
