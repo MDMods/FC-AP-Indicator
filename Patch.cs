@@ -1,11 +1,9 @@
 ﻿using Assets.Scripts.GameCore.HostComponent;
-using Assets.Scripts.GameCore.Managers;
+using Assets.Scripts.PeroTools.Commons;
 using Assets.Scripts.UI.Panels;
+using GameLogic;
 using HarmonyLib;
 using UnityEngine;
-using GameLogic;
-using MelonLoader;
-using Assets.Scripts.PeroTools.Commons;
 
 namespace FC_AP
 {

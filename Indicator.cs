@@ -14,12 +14,15 @@ namespace FC_AP
         internal static Font font { get; set; }
         internal static bool SetAP { get; set; }
         internal static bool SetFC { get; set; }
+        internal static bool SetMiss { get; set; }
         internal static bool Restarted { get; set; }
 
         internal static int GhostMiss = 0;
         internal static int CollectableNoteMiss = 0;
         private static GameObject AP { get; set; }
         private static GameObject FC { get; set; }
+        private static GameObject Miss { get; set; }
+
         private static int GreatNum { get; set; }
 
         private static Color blue = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
@@ -63,10 +66,19 @@ namespace FC_AP
             }
 
             //if AP or FC is set and get normal miss or ghost miss when enabled or collectable note miss when enabled
-            if ((AP != null || FC != null) && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
+            if (!SetMiss && (AP != null || FC != null) && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
             {
                 Destroy(AP);
                 Destroy(FC);
+                if (GreatNum == 0)
+                {
+                    Miss = SetGameObject("Miss", Color.grey, "");
+                }
+                else
+                {
+                    Miss = SetGameObject("Miss", Color.grey, GreatNum + "G");
+                }
+                SetMiss = true;
             }
 
             //if FC is set and great number are not correct then just +1
@@ -76,11 +88,18 @@ namespace FC_AP
                 FC.GetComponent<Text>().text = "FC " + GreatNum + "G";
             }
 
+            if (Miss != null && GreatNum != Singleton<TaskStageTarget>.instance.m_GreatResult)
+            {
+                GreatNum++;
+                Miss.GetComponent<Text>().text = GreatNum + "G";
+            }
+
             //Destroy gameobject in result screen
             if (GameObject.Find("PnlVictory_2D") != null)
             {
                 Destroy(AP);
                 Destroy(FC);
+                Destroy(Miss);
             }
 
             //if Restart is enabled and not restarted, get a great when great restart is enabled or get a miss when miss restart is enabled will restart the game
@@ -94,18 +113,20 @@ namespace FC_AP
 
         private static GameObject SetGameObject(string name, Color color, string text)
         {
-            GameObject icanvas = GameObject.Find("Indicator Canvas");
+            GameObject canvas = GameObject.Find("Indicator Canvas");
             GameObject gameobject = new GameObject(name);
-            gameobject.transform.SetParent(icanvas.transform);
-            gameobject.transform.position = new Vector3(Screen.width * 17 / 80 + 25, Screen.height * 80 / 90 - 5, 0f);
+            GameObject Score = GameObject.Find("Score");
+            gameobject.transform.SetParent(canvas.transform);
+            gameobject.transform.position = new Vector3(Score.transform.position.x + 3.5f, Score.transform.position.y - 1.13f, Score.transform.position.z);
             Text gameobject_text = gameobject.AddComponent<Text>();
             gameobject_text.text = text;
             gameobject_text.font = font;
             gameobject_text.fontSize = 100 * Screen.height / 1080;
             gameobject_text.color = color;
-            gameobject_text.transform.position = new Vector3(Screen.width * 5 / 16, Screen.height * 38 / 45 - 10, 0f);
+            gameobject_text.transform.position = new Vector3(Score.transform.position.x + 3.5f, Score.transform.position.y - 1.13f, Score.transform.position.z);
             RectTransform rectTransform = gameobject_text.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(400, 200);
+            rectTransform.sizeDelta = new Vector2(Screen.width * 1 / 5, Screen.height * 1 / 5);
+            rectTransform.localScale = new Vector3(1, 1, 1);
             return gameobject;
         }
 
@@ -116,7 +137,11 @@ namespace FC_AP
             canvas.AddComponent<Canvas>();
             canvas.AddComponent<CanvasScaler>();
             canvas.AddComponent<GraphicRaycaster>();
-            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Camera_2D").GetComponent<Camera>();
+            canvas.GetComponent<Canvas>().sortingOrder = 0;
+            canvas.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920, 1080);
+            canvas.GetComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
         }
     }
 }

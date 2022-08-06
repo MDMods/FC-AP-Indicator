@@ -10,7 +10,7 @@ namespace FC_AP
         public override void OnApplicationStart()
         {
             Save.Load();
-            LoggerInstance.Msg("FC/AP indicator loaded!");
+            LoggerInstance.Msg("FC/AP indicator is loaded!");
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -26,6 +26,7 @@ namespace FC_AP
             {
                 Indicator.SetAP = false;
                 Indicator.SetFC = false;
+                Indicator.SetMiss = false;
                 Indicator.Restarted = false;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;

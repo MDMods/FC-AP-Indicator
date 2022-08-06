@@ -10,7 +10,7 @@
 
         public const string Company = null;
 
-        public const string Version = "1.3.0";
+        public const string Version = "1.3.1";
 
         public const string DownloadLink = "https://github.com/MDModsDev/FC-AP-Indicator/releases/latest";
     }
