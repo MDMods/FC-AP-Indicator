@@ -27,16 +27,16 @@ namespace FC_AP
                 {
                     GameObject fc_apToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
                     ToggleManager.FC_APToggle = fc_apToggle;
-                    ToggleManager.SetupToggle(ToggleManager.FC_APToggle, "FC AP Indicator Toggle", new Vector3(3.5f, -5f, 100f), fc_apEnabled, "FC/AP On/Off");
+                    ToggleManager.SetupToggle(ToggleManager.FC_APToggle, "FC AP Indicator Toggle", new Vector3(3.45f, -5.05f, 100f), fc_apEnabled, "FC/AP On/Off");
                 }
             }
-            fixed (bool* restartEnabled = &Save.Settings.RestartEnabled)
+            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
             {
-                if (ToggleManager.RestartToggle == null && vSelect != null)
+                if (ToggleManager.ChartReviewToggle == null && vSelect != null)
                 {
-                    GameObject restartToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-                    ToggleManager.RestartToggle = restartToggle;
-                    ToggleManager.SetupToggle(ToggleManager.RestartToggle, "Restart Toggle", new Vector3(6.5f, -5f, 100f), restartEnabled, "Auto Restart On/Off");
+                    GameObject chartReviewToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
+                    ToggleManager.ChartReviewToggle = chartReviewToggle;
+                    ToggleManager.SetupToggle(ToggleManager.ChartReviewToggle, "Chart Review Toggle", new Vector3(6.4f, -5.05f, 100f), chartReviewEnabled, "Chart Review On/Off");
                 }
             }
         }

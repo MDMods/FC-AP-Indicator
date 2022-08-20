@@ -8,7 +8,7 @@ namespace FC_AP
     internal class ToggleManager
     {
         internal static GameObject FC_APToggle { get; set; }
-        internal static GameObject RestartToggle { get; set; }
+        internal static GameObject ChartReviewToggle { get; set; }
 
         internal static unsafe void SetupToggle(GameObject Toggle, string name, Vector3 position, bool* IsEnabled, string text)
         {

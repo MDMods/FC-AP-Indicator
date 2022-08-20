@@ -6,7 +6,7 @@ namespace FC_AP
 {
     internal class Save
     {
-        private static Data Default = new Data(true, false, true, true, true, true);
+        private static Data Default = new Data(true, false, true, true);
         internal static Data Settings;
 
         public static void Load()
@@ -26,14 +26,8 @@ namespace FC_AP
         [TomlPrecedingComment("Whether the FC AP indicator is enabled")]
         internal bool FC_APEnabled;
 
-        [TomlPrecedingComment("Whether the auto restart is enabled")]
-        internal bool RestartEnabled;
-
-        [TomlPrecedingComment("Whether auto restart when you hit a great")]
-        internal bool GreatRestartEnabled;
-
-        [TomlPrecedingComment("Whether auto restart when you get a miss")]
-        internal bool MissRestartEnabled;
+        [TomlPrecedingComment("Whether the chart review is enabled")]
+        internal bool ChartReviewEnabled;
 
         [TomlPrecedingComment("Whether delete FC indicator when missing a ghost")]
         internal bool GhostMissEnabled;
@@ -41,12 +35,10 @@ namespace FC_AP
         [TomlPrecedingComment("Whether delete FC indicator when missing a collectable notes")]
         internal bool CollectableMissEnabled;
 
-        internal Data(bool fc_apEnabled, bool restartEnabled, bool greatRestart, bool missRestart, bool ghostMiss, bool collectableMiss)
+        internal Data(bool fc_apEnabled, bool chartReviewEnabled, bool ghostMiss, bool collectableMiss)
         {
             FC_APEnabled = fc_apEnabled;
-            RestartEnabled = restartEnabled;
-            GreatRestartEnabled = greatRestart;
-            MissRestartEnabled = missRestart;
+            ChartReviewEnabled = chartReviewEnabled;
             GhostMissEnabled = ghostMiss;
             CollectableMissEnabled = collectableMiss;
         }

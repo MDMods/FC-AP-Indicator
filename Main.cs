@@ -27,7 +27,7 @@ namespace FC_AP
                 Indicator.SetAP = false;
                 Indicator.SetFC = false;
                 Indicator.SetMiss = false;
-                Indicator.Restarted = false;
+                Indicator.ObjectDisabled = false;
                 Indicator.GreatNum = 0;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
