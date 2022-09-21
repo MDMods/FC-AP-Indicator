@@ -10,6 +10,10 @@ namespace FC_AP
         internal static GameObject FC_APToggle { get; set; }
         internal static GameObject ChartReviewToggle { get; set; }
 
+        /// <summary>
+        /// function for setting up toggle
+        /// </summary>
+        /// <param name="IsEnabled">must use bool pointer to make unityaction convert success</param>
         internal static unsafe void SetupToggle(GameObject Toggle, string name, Vector3 position, bool* IsEnabled, string text)
         {
             Toggle.name = name;

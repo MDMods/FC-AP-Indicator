@@ -4,6 +4,8 @@ using Assets.Scripts.UI.Panels;
 using GameLogic;
 using HarmonyLib;
 using UnityEngine;
+using MelonLoader;
+using Assets.Scripts.PeroTools.Managers;
 
 namespace FC_AP
 {

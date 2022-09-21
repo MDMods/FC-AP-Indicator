@@ -22,6 +22,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -93,8 +95,7 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Muse Dash\MelonLoader\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine.UI">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Muse Dash\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>

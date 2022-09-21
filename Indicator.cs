@@ -4,9 +4,11 @@ using Assets.Scripts.PeroTools.Nice.Datas;
 using Assets.Scripts.PeroTools.Nice.Interface;
 using FormulaBase;
 using System;
+using System.Configuration;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using MelonLoader;
 
 namespace FC_AP
 
@@ -43,6 +45,9 @@ namespace FC_AP
         {
         }
 
+        /// <summary>
+        /// Get font
+        /// </summary>
         private void Start()
         {
             var asset = Addressables.LoadAssetAsync<Font>("Snaps Taste");
@@ -70,14 +75,14 @@ namespace FC_AP
             }
 
             //if is AP and FC is not set, ghost and collectable notes are not count as miss when missed
-            if (AP != null && !SetFC && ((!Save.Settings.GhostMissEnabled && GhostMiss != 0) || (!Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
+            /*if (AP != null && !SetFC && ((!Save.Settings.GhostMissEnabled && GhostMiss != 0) || (!Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
             {
                 Destroy(AP);
                 FC = SetGameObject("FC", blue, "FC");
                 SetFC = true;
-            }
+            }*/
 
-            //if AP or FC is set and get normal miss or ghost miss when enabled or collectable note miss when enabled
+            //if AP or FC is set, Miss doesn't set and get normal miss or ghost miss when enabled or collectable note miss when enabled
             if (!SetMiss && (AP != null || FC != null) && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
             {
                 Destroy(AP);
@@ -93,7 +98,7 @@ namespace FC_AP
                 SetMiss = true;
             }
 
-            //if FC is set and great number are not correct then just +1
+            //if FC or Miss is set and great number are not correct then just +1
             if (GreatNum < Singleton<TaskStageTarget>.instance.m_GreatResult)
             {
                 GreatNum++;
@@ -114,6 +119,8 @@ namespace FC_AP
                 Destroy(FC);
                 Destroy(Miss);
             }
+
+            // if chart review is canceled after enabled
             if (!Save.Settings.ChartReviewEnabled && (LastCharacter != -1 || LastElfin != -1) && !Reset)
             {
                 VariableUtils.SetResult(Singleton<DataManager>.instance["Account"]["SelectedRoleIndex"], new Il2CppSystem.Int32() { m_value = LastCharacter }.BoxIl2CppObject());
@@ -124,9 +131,11 @@ namespace FC_AP
                 Reset = true;
             }
 
+            // if chart review is enabled
             if (Save.Settings.ChartReviewEnabled)
             {
                 Reset = false;
+
                 // if not set character and elfin
                 if (!Set)
                 {
@@ -143,7 +152,7 @@ namespace FC_AP
                     Set = true;
                 }
 
-                // if is game scene and objects are not disabled
+                // if is in game scene and objects are not disabled
                 if (!ObjectDisabled)
                 {
                     GameObject.Find("Below").SetActive(false);
@@ -160,15 +169,15 @@ namespace FC_AP
             GameObject canvas = GameObject.Find("Indicator Canvas");
             GameObject gameobject = new GameObject(name);
             gameobject.transform.SetParent(canvas.transform);
-            gameobject.transform.position = new Vector3(-2.6111f, 2.5506f, 90);
             Text gameobject_text = gameobject.AddComponent<Text>();
             gameobject_text.text = text;
+            gameobject_text.alignment = TextAnchor.UpperLeft;
             gameobject_text.font = font;
-            gameobject_text.fontSize = 100 * Screen.height / 1080;
             gameobject_text.color = color;
-            gameobject_text.transform.position = new Vector3(-2.6111f, 2.5506f, 90);
+            gameobject_text.fontSize = 100;
+            gameobject_text.transform.localPosition = new Vector3(-102.398f, 367.2864f, 0f);
             RectTransform rectTransform = gameobject_text.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(Screen.width * 1 / 5, Screen.height * 1 / 5);
+            rectTransform.sizeDelta = new Vector2(960, 216);
             rectTransform.localScale = new Vector3(1, 1, 1);
             return gameobject;
         }
@@ -182,9 +191,9 @@ namespace FC_AP
             canvas.AddComponent<GraphicRaycaster>();
             canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
             canvas.GetComponent<Canvas>().worldCamera = GameObject.Find("Camera_2D").GetComponent<Camera>();
-            canvas.GetComponent<Canvas>().sortingOrder = 0;
             canvas.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920, 1080);
-            canvas.GetComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            canvas.GetComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            canvas.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         }
     }
 }
