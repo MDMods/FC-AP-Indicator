@@ -4,11 +4,9 @@ using Assets.Scripts.PeroTools.Nice.Datas;
 using Assets.Scripts.PeroTools.Nice.Interface;
 using FormulaBase;
 using System;
-using System.Configuration;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
-using MelonLoader;
 
 namespace FC_AP
 
@@ -18,10 +16,9 @@ namespace FC_AP
         // indicator
 
         internal static Font font { get; set; }
-        internal static bool SetAP { get; set; }
-        internal static bool SetFC { get; set; }
-        internal static bool SetMiss { get; set; }
         internal static int GreatNum { get; set; }
+        internal static int MissNum { get; set; }
+        internal static int CurrentMissNum { get; set; }
         internal static int GhostMiss { get; set; }
         internal static int CollectableNoteMiss { get; set; }
         private static GameObject AP { get; set; }
@@ -29,6 +26,8 @@ namespace FC_AP
         private static GameObject Miss { get; set; }
 
         private static Color blue = new Color(0 / 255f, 136 / 255f, 255 / 255f, 255 / 255f);
+
+        private static Color silver = new Color(192 / 255f, 192 / 255f, 192 / 255f, 255 / 255f);
 
         //chart review
 
@@ -57,48 +56,52 @@ namespace FC_AP
         private void Update()
         {
             // if indicator is enabled and not set, also is in game
-            if (Save.Settings.FC_APEnabled && !SetAP && Singleton<StageBattleComponent>.instance.isInGame)
+            if (Save.Settings.FC_APEnabled && AP == null && FC == null && Miss == null && Singleton<StageBattleComponent>.instance.isInGame)
             {
                 SetCanvas();
-                SetAP = true;
                 AP = SetGameObject("AP", Color.yellow, "AP");
             }
 
             //if AP is set, FC is not set and get a great
-            if (AP != null && !SetFC && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
+            if (AP != null && FC == null && Miss == null && Singleton<TaskStageTarget>.instance.m_GreatResult != 0)
             {
                 Destroy(AP);
                 //if not AP then it must be 1 Great
                 GreatNum = 1;
                 FC = SetGameObject("FC", blue, "FC " + GreatNum + "G");
-                SetFC = true;
             }
 
-            //if is AP and FC is not set, ghost and collectable notes are not count as miss when missed
-            /*if (AP != null && !SetFC && ((!Save.Settings.GhostMissEnabled && GhostMiss != 0) || (!Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
+            //if AP is set, FC is not set and ghost not count as miss
+            if (AP != null && FC == null && GhostMiss != 0)
             {
                 Destroy(AP);
                 FC = SetGameObject("FC", blue, "FC");
-                SetFC = true;
-            }*/
+            }
+
+            //if AP is set, FC is not set and collectable note not count as miss
+            if (AP != null && FC == null && CollectableNoteMiss != 0)
+            {
+                Destroy(AP);
+                FC = SetGameObject("FC", blue, "FC");
+            }
 
             //if AP or FC is set, Miss doesn't set and get normal miss or ghost miss when enabled or collectable note miss when enabled
-            if (!SetMiss && (AP != null || FC != null) && (Singleton<TaskStageTarget>.instance.m_MissCombo != 0 || (Save.Settings.GhostMissEnabled && GhostMiss != 0) || (Save.Settings.CollectableMissEnabled && CollectableNoteMiss != 0)))
+            if (Miss == null && (AP != null || FC != null) && CurrentMissNum != 0)
             {
                 Destroy(AP);
                 Destroy(FC);
-                if (Singleton<TaskStageTarget>.instance.m_GreatResult == 0)
+                MissNum = 1;
+                if (GreatNum == 0)
                 {
-                    Miss = SetGameObject("Miss", Color.grey, "");
+                    Miss = SetGameObject("Miss", silver, MissNum + "M");
                 }
                 else
                 {
-                    Miss = SetGameObject("Miss", Color.grey, GreatNum + "G");
+                    Miss = SetGameObject("Miss", silver, MissNum + "M " + GreatNum + "G");
                 }
-                SetMiss = true;
             }
 
-            //if FC or Miss is set and great number are not correct then just +1
+            //if FC or Miss is set and great number are not correct then +1
             if (GreatNum < Singleton<TaskStageTarget>.instance.m_GreatResult)
             {
                 GreatNum++;
@@ -108,7 +111,24 @@ namespace FC_AP
                 }
                 if (Miss != null)
                 {
-                    Miss.GetComponent<Text>().text = GreatNum + "G";
+                    Miss.GetComponent<Text>().text = MissNum + "M " + GreatNum + "G";
+                }
+            }
+
+            // if Miss is set and miss number are not correct then +1
+            if (MissNum < CurrentMissNum)
+            {
+                MissNum++;
+                if (Miss != null)
+                {
+                    if (GreatNum == 0)
+                    {
+                        Miss.GetComponent<Text>().text = MissNum + "M";
+                    }
+                    else
+                    {
+                        Miss.GetComponent<Text>().text = MissNum + "M " + GreatNum + "G";
+                    }
                 }
             }
 

@@ -13,6 +13,9 @@ namespace FC_AP
             LoggerInstance.Msg("FC/AP indicator is loaded!");
         }
 
+        /// <summary>
+        /// Reset All
+        /// </summary>
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             if (sceneName == "GameMain")
@@ -24,11 +27,10 @@ namespace FC_AP
             }
             else
             {
-                Indicator.SetAP = false;
-                Indicator.SetFC = false;
-                Indicator.SetMiss = false;
                 Indicator.ObjectDisabled = false;
                 Indicator.GreatNum = 0;
+                Indicator.CurrentMissNum = 0;
+                Indicator.MissNum = 0;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
                 if (Indicator.font != null)

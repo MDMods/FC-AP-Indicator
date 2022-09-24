@@ -1,11 +1,10 @@
 ﻿using Assets.Scripts.GameCore.HostComponent;
 using Assets.Scripts.PeroTools.Commons;
 using Assets.Scripts.UI.Panels;
+using FormulaBase;
 using GameLogic;
 using HarmonyLib;
 using UnityEngine;
-using MelonLoader;
-using Assets.Scripts.PeroTools.Managers;
 
 namespace FC_AP
 {
@@ -52,35 +51,19 @@ namespace FC_AP
         }
     }
 
-    // ghost miss
-    /*[HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
+    // Hold miss
+    [HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
     internal class SetPlayResultPatch
     {
         private static void Postfix(int idx, byte result, bool isMulStart = false, bool isMulEnd = false, bool isLeft = false)
         {
-            if (result == 0)
+            MusicData musicDataByIdx = Singleton<StageBattleComponent>.instance.GetMusicDataByIdx(idx);
+            if (result == 1 && musicDataByIdx.noteData.type == 3)
             {
-                Indicator.CollectableNoteMiss++;
-            }
-            if (result == 1)
-            {
-                Indicator.GhostMiss++;
+                Indicator.CurrentMissNum++;
             }
         }
     }
-
-    // collectable note miss
-    [HarmonyPatch(typeof(StatisticsManager), "OnNoteResult")]
-    internal class OnNoteResultPatch
-    {
-        private static void Postfix(int result)
-        {
-            if (result == 0)
-            {
-                Indicator.CollectableNoteMiss++;
-            }
-        }
-    }*/
 
     [HarmonyPatch(typeof(GameMissPlay), "MissCube")]
     internal class MissCubePatch
@@ -88,13 +71,58 @@ namespace FC_AP
         private static void Postfix(int idx, decimal currentTick)
         {
             int result = Singleton<BattleEnemyManager>.instance.GetPlayResult(idx);
+            MusicData musicDataByIdx = Singleton<StageBattleComponent>.instance.GetMusicDataByIdx(idx);
             if (result == 0)
             {
-                Indicator.CollectableNoteMiss++;
+                // air ghost miss
+                if (musicDataByIdx.noteData.type == 4)
+                {
+                    Indicator.GhostMiss++;
+                    if (Save.Settings.GhostMissEnabled)
+                    {
+                        Indicator.CurrentMissNum++;
+                    }
+                }
+                // air collectable note miss
+                else if (musicDataByIdx.noteData.type == 7)
+                {
+                    Indicator.CollectableNoteMiss++;
+                    if (Save.Settings.CollectableMissEnabled)
+                    {
+                        Indicator.CurrentMissNum++;
+                    }
+                }
+                // normal miss
+                else if (musicDataByIdx.noteData.type != 2 && !musicDataByIdx.isDouble)
+                {
+                    Indicator.CurrentMissNum++;
+                }
             }
             if (result == 1)
             {
-                Indicator.GhostMiss++;
+                // ground ghost miss
+                if (musicDataByIdx.noteData.type == 4)
+                {
+                    Indicator.GhostMiss++;
+                    if (Save.Settings.GhostMissEnabled)
+                    {
+                        Indicator.CurrentMissNum++;
+                    }
+                }
+                // ground collectable note miss
+                else if (musicDataByIdx.noteData.type == 7)
+                {
+                    Indicator.CollectableNoteMiss++;
+                    if (Save.Settings.CollectableMissEnabled)
+                    {
+                        Indicator.CurrentMissNum++;
+                    }
+                }
+                // normal miss
+                else
+                {
+                    Indicator.CurrentMissNum++;
+                }
             }
         }
     }
