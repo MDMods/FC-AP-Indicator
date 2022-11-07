@@ -12,7 +12,7 @@ namespace FC_AP
         private static bool Preparation;
         private static bool IsMainScene;
 
-        public override void OnApplicationStart()
+        public override void OnInitializeMelon()
         {
             Save.Load();
             LoggerInstance.Msg("FC/AP indicator is loaded!");

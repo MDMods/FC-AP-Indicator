@@ -167,8 +167,6 @@ namespace FC_AP
                     VariableUtils.SetResult(Singleton<DataManager>.instance["Account"]["SelectedElfinIndex"], new Il2CppSystem.Int32() { m_value = -1 }.BoxIl2CppObject());
                     VariableUtils.SetResult(Singleton<DataManager>.instance["GameConfig"]["Offset"], new Il2CppSystem.Int32() { m_value = 0 }.BoxIl2CppObject());
                     VariableUtils.SetResult(Singleton<DataManager>.instance["Account"]["IsAutoFever"], new Il2CppSystem.Boolean() { m_value = false }.BoxIl2CppObject());
-                    VariableUtils.SetResult(Singleton<DataManager>.instance["GameConfig"]["FullScreen"], new Il2CppSystem.Boolean() { m_value = false }.BoxIl2CppObject());
-                    VariableUtils.SetResult(Singleton<DataManager>.instance["GameConfig"]["HasBorder"], new Il2CppSystem.Boolean() { m_value = false }.BoxIl2CppObject());
                     Set = true;
                 }
 
