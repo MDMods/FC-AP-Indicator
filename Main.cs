@@ -9,9 +9,6 @@ namespace FC_AP
 {
     public class Main : MelonMod
     {
-        private static bool Preparation;
-        private static bool IsMainScene;
-
         public override void OnInitializeMelon()
         {
             Save.Load();
@@ -40,40 +37,24 @@ namespace FC_AP
                 Indicator.MissNum = 0;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
-                Preparation = false;
                 if (Indicator.font != null)
                 {
                     Addressables.Release(Indicator.font);
                 }
             }
-
-            if (sceneName == "UISystem_PC")
-            {
-                IsMainScene = true;
-            }
-            else
-            {
-                IsMainScene = false;
-            }
         }
 
         public override void OnUpdate()
         {
-            if (IsMainScene)
+            if (!GameObject.Find("PnlOption") && ToggleManager.FC_APToggle != null)
             {
-                // remove toggles on preparation screen
-                if (GameObject.Find("PnlPreparation") && !Preparation)
-                {
-                    Preparation = true;
-                    ToggleManager.FC_APToggle.SetActive(false);
-                    ToggleManager.ChartReviewToggle.SetActive(false);
-                }
-                else if (!GameObject.Find("PnlPreparation") && Preparation)
-                {
-                    Preparation = false;
-                    ToggleManager.FC_APToggle.SetActive(true);
-                    ToggleManager.ChartReviewToggle.SetActive(true);
-                }
+                ToggleManager.FC_APToggle.SetActive(false);
+                ToggleManager.ChartReviewToggle.SetActive(false);
+            }
+            else if (GameObject.Find("PnlOption") && ToggleManager.FC_APToggle != null)
+            {
+                ToggleManager.FC_APToggle.SetActive(true);
+                ToggleManager.ChartReviewToggle.SetActive(true);
             }
         }
     }
