@@ -43,14 +43,6 @@ namespace FC_AP
         }
     }
 
-    [HarmonyPatch(typeof(VolumeSelect), MethodType.Constructor)]
-    internal class VolumeCtorPatch
-    {
-        private static void Postfix(VolumeSelect __instance)
-        {
-        }
-    }
-
     // Hold miss
     [HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
     internal class SetPlayResultPatch
