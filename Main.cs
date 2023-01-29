@@ -43,15 +43,15 @@ namespace FC_AP
 
         public override void OnUpdate()
         {
-            if (!GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
+            if (!GameObject.Find("PnlOption") && PnlMenuPatch.FC_APToggle != null)
             {
-                Patch.FC_APToggle.SetActive(false);
-                Patch.ChartReviewToggle.SetActive(false);
+                PnlMenuPatch.FC_APToggle.SetActive(false);
+                PnlMenuPatch.ChartReviewToggle.SetActive(false);
             }
-            else if (GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
+            else if (GameObject.Find("PnlOption") && PnlMenuPatch.FC_APToggle != null)
             {
-                Patch.FC_APToggle.SetActive(true);
-                Patch.ChartReviewToggle.SetActive(true);
+                PnlMenuPatch.FC_APToggle.SetActive(true);
+                PnlMenuPatch.ChartReviewToggle.SetActive(true);
             }
         }
     }

@@ -1,16 +1,18 @@
 ﻿using Assets.Scripts.GameCore.HostComponent;
 using Assets.Scripts.PeroTools.Commons;
 using Assets.Scripts.UI.Panels;
+using Assets.Scripts.UI.Specials;
 using FormulaBase;
 using GameLogic;
 using HarmonyLib;
 using MuseDashMirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FC_AP
 {
     [HarmonyPatch(typeof(PnlMenu), "Awake")]
-    internal static class Patch
+    internal static class PnlMenuPatch
     {
         internal static GameObject FC_APToggle { get; set; }
         internal static GameObject ChartReviewToggle { get; set; }
@@ -43,9 +45,25 @@ namespace FC_AP
         }
     }
 
+    [HarmonyPatch(typeof(SwitchLanguages), "OnClick")]
+    internal static class SwitchLanguagesPatch
+    {
+        private static unsafe void Postfix()
+        {
+            fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
+            {
+                PnlMenuPatch.FC_APToggle.transform.Find("Txt").GetComponent<Text>().text = "FC/AP On/Off";
+            }
+            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
+            {
+                PnlMenuPatch.ChartReviewToggle.transform.Find("Txt").GetComponent<Text>().text = "Chart Review On/Off";
+            }
+        }
+    }
+
     // Hold miss
     [HarmonyPatch(typeof(BattleEnemyManager), "SetPlayResult")]
-    internal class SetPlayResultPatch
+    internal static class SetPlayResultPatch
     {
         private static void Postfix(int idx, byte result, bool isMulStart = false, bool isMulEnd = false, bool isLeft = false)
         {
@@ -58,7 +76,7 @@ namespace FC_AP
     }
 
     [HarmonyPatch(typeof(GameMissPlay), "MissCube")]
-    internal class MissCubePatch
+    internal static class MissCubePatch
     {
         private static void Postfix(int idx, decimal currentTick)
         {
