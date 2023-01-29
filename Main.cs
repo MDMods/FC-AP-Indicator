@@ -1,9 +1,9 @@
 ﻿using Il2CppSystem.IO;
 using MelonLoader;
+using MuseDashMirror;
 using Tomlet;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace FC_AP
 {
@@ -37,24 +37,21 @@ namespace FC_AP
                 Indicator.MissNum = 0;
                 Indicator.GhostMiss = 0;
                 Indicator.CollectableNoteMiss = 0;
-                if (Indicator.font != null)
-                {
-                    Addressables.Release(Indicator.font);
-                }
+                UICreate.UnloadFonts();
             }
         }
 
         public override void OnUpdate()
         {
-            if (!GameObject.Find("PnlOption") && ToggleManager.FC_APToggle != null)
+            if (!GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
             {
-                ToggleManager.FC_APToggle.SetActive(false);
-                ToggleManager.ChartReviewToggle.SetActive(false);
+                Patch.FC_APToggle.SetActive(false);
+                Patch.ChartReviewToggle.SetActive(false);
             }
-            else if (GameObject.Find("PnlOption") && ToggleManager.FC_APToggle != null)
+            else if (GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
             {
-                ToggleManager.FC_APToggle.SetActive(true);
-                ToggleManager.ChartReviewToggle.SetActive(true);
+                Patch.FC_APToggle.SetActive(true);
+                Patch.ChartReviewToggle.SetActive(true);
             }
         }
     }

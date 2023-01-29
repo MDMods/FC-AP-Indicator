@@ -4,14 +4,17 @@ using Assets.Scripts.UI.Panels;
 using FormulaBase;
 using GameLogic;
 using HarmonyLib;
-using MelonLoader;
+using MuseDashMirror;
 using UnityEngine;
 
 namespace FC_AP
 {
     [HarmonyPatch(typeof(PnlMenu), "Awake")]
-    internal class Patch
+    internal static class Patch
     {
+        internal static GameObject FC_APToggle { get; set; }
+        internal static GameObject ChartReviewToggle { get; set; }
+
         private static unsafe void Postfix(PnlMenu __instance)
         {
             GameObject vSelect = null;
@@ -25,20 +28,16 @@ namespace FC_AP
             }
             fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
             {
-                if (ToggleManager.FC_APToggle == null && vSelect != null)
+                if (FC_APToggle == null && vSelect != null)
                 {
-                    GameObject fc_apToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-                    ToggleManager.FC_APToggle = fc_apToggle;
-                    ToggleManager.SetupToggle(ToggleManager.FC_APToggle, "FC AP Indicator Toggle", new Vector3(-6.8f, -2.65f, 100f), fc_apEnabled, "FC/AP On/Off");
+                    FC_APToggle = UICreate.CreatePnlMenuToggle("FC AP Indicator Toggle", new Vector3(-6.8f, -2.65f, 100f), fc_apEnabled, "FC/AP On/Off");
                 }
             }
             fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
             {
-                if (ToggleManager.ChartReviewToggle == null && vSelect != null)
+                if (ChartReviewToggle == null && vSelect != null)
                 {
-                    GameObject chartReviewToggle = UnityEngine.Object.Instantiate<GameObject>(vSelect.transform.Find("LogoSetting").Find("Toggles").Find("TglOn").gameObject, __instance.transform);
-                    ToggleManager.ChartReviewToggle = chartReviewToggle;
-                    ToggleManager.SetupToggle(ToggleManager.ChartReviewToggle, "Chart Review Toggle", new Vector3(-6.8f, -3.55f, 100f), chartReviewEnabled, "Chart Review On/Off");
+                    ChartReviewToggle = UICreate.CreatePnlMenuToggle("Chart Review Toggle", new Vector3(-6.8f, -3.55f, 100f), chartReviewEnabled, "Chart Review On/Off");
                 }
             }
         }
