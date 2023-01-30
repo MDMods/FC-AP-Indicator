@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.GameCore.HostComponent;
 using Assets.Scripts.PeroTools.Commons;
 using Assets.Scripts.UI.Panels;
-using Assets.Scripts.UI.Specials;
 using FormulaBase;
 using GameLogic;
 using HarmonyLib;
@@ -11,13 +10,30 @@ using UnityEngine.UI;
 
 namespace FC_AP
 {
-    [HarmonyPatch(typeof(PnlMenu), "Awake")]
-    internal static class PnlMenuPatch
+    internal static class Patch
     {
         internal static GameObject FC_APToggle { get; set; }
         internal static GameObject ChartReviewToggle { get; set; }
 
-        private static unsafe void Postfix(PnlMenu __instance)
+        internal static void Init()
+        {
+            CommonPatchs.PnlMenuPatch(typeof(Patch), "PnlMenuPostfix");
+            CommonPatchs.SwitchLanguagesPatch(typeof(Patch), "SwitchLanguagesPostfix");
+        }
+
+        public static unsafe void SwitchLanguagesPostfix()
+        {
+            fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
+            {
+                FC_APToggle.transform.Find("Txt").GetComponent<Text>().text = "FC/AP On/Off";
+            }
+            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
+            {
+                ChartReviewToggle.transform.Find("Txt").GetComponent<Text>().text = "Chart Review On/Off";
+            }
+        }
+
+        public static unsafe void PnlMenuPostfix(PnlMenu __instance)
         {
             GameObject vSelect = null;
             foreach (Il2CppSystem.Object @object in __instance.transform.parent.parent.Find("Forward"))
@@ -41,22 +57,6 @@ namespace FC_AP
                 {
                     ChartReviewToggle = UICreate.CreatePnlMenuToggle("Chart Review Toggle", new Vector3(-6.8f, -3.55f, 100f), chartReviewEnabled, "Chart Review On/Off");
                 }
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(SwitchLanguages), "OnClick")]
-    internal static class SwitchLanguagesPatch
-    {
-        private static unsafe void Postfix()
-        {
-            fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
-            {
-                PnlMenuPatch.FC_APToggle.transform.Find("Txt").GetComponent<Text>().text = "FC/AP On/Off";
-            }
-            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
-            {
-                PnlMenuPatch.ChartReviewToggle.transform.Find("Txt").GetComponent<Text>().text = "Chart Review On/Off";
             }
         }
     }
