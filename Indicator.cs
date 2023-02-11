@@ -4,16 +4,16 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using static MuseDashMirror.BattleComponent;
-using static MuseDashMirror.PlayerData;
-using static MuseDashMirror.UICreate;
+using static MuseDashMirror.UICreate.CanvasCreate;
+using static MuseDashMirror.UICreate.Colors;
+using static MuseDashMirror.UICreate.Fonts;
+using static MuseDashMirror.UICreate.TextGameObjectCreate;
 
 namespace FC_AP
 
 {
     internal class Indicator : MonoBehaviour
     {
-        // indicator
-
         internal static int GreatNum { get; set; }
         internal static int MissNum { get; set; }
         internal static int CurrentMissNum { get; set; }
@@ -22,17 +22,6 @@ namespace FC_AP
         private static GameObject AP { get; set; }
         private static GameObject FC { get; set; }
         private static GameObject Miss { get; set; }
-
-        //chart review
-
-        internal static bool ObjectDisabled { get; set; }
-        private static bool Set { get; set; }
-        private static bool Reset { get; set; }
-        private static int LastOffset { get; set; }
-
-        private static int LastCharacter { get; set; } = -1;
-
-        private static int LastElfin { get; set; } = -1;
 
         public Indicator(IntPtr intPtr) : base(intPtr)
         {
@@ -128,47 +117,6 @@ namespace FC_AP
                 Destroy(AP);
                 Destroy(FC);
                 Destroy(Miss);
-            }
-
-            // if chart review is canceled after enabled
-            if (!Save.Settings.ChartReviewEnabled && (LastCharacter != -1 || LastElfin != -1) && !Reset)
-            {
-                SetCharacter(LastCharacter);
-                SetElfin(LastElfin);
-                SetOffset(LastOffset);
-                SetAutoFever(true);
-                Set = false;
-                Reset = true;
-            }
-
-            // if chart review is enabled
-            if (Save.Settings.ChartReviewEnabled)
-            {
-                Reset = false;
-
-                // if not set character and elfin
-                if (!Set)
-                {
-                    LastCharacter = SelectedCharacterIndex;
-                    LastElfin = SelectedElfinIndex;
-                    LastOffset = Offset;
-
-                    SetCharacter(2);
-                    SetElfin(-1);
-                    SetOffset(0);
-                    SetAutoFever(false);
-                    Set = true;
-                }
-
-                // if is in game scene and objects are not disabled
-                if (!ObjectDisabled)
-                {
-                    GameObject.Find("Below").SetActive(false);
-                    GameObject.Find("Score").SetActive(false);
-                    GameObject.Find("HitPointRoad").SetActive(false);
-                    GameObject.Find("HitPointAir").SetActive(false);
-                    ObjectDisabled = true;
-                }
             }
         }
 

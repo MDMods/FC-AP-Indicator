@@ -1,6 +1,10 @@
-﻿using Il2CppSystem.IO;
+﻿using Assets.Scripts.UI.Panels;
+using Il2CppSystem.IO;
 using MelonLoader;
 using MuseDashMirror;
+using MuseDashMirror.CommonPatches;
+using MuseDashMirror.UICreate;
+using System;
 using Tomlet;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -11,48 +15,47 @@ namespace FC_AP
     {
         public override void OnInitializeMelon()
         {
-            Patch.Init();
             Save.Load();
+            PatchEvents.PnlMenuEvent += new Action<PnlMenu>(Patch.PnlMenuPostfix);
+            PatchEvents.SwitchLanguagesEvent += new Action(Patch.SwitchLanguagesPostfix);
+            PatchEvents.MenuSelectEvent += new Action<int, int, bool>(DisableToggle);
+            SceneInfo.EnterGameScene += new Action(RegisterGameObject);
+            SceneInfo.ExitGameScene += new Action(Reset);
             LoggerInstance.Msg("FC/AP indicator is loaded!");
         }
 
-        public override void OnApplicationQuit()
+        public override void OnDeinitializeMelon()
         {
             File.WriteAllText(Path.Combine("UserData", "FC AP.cfg"), TomletMain.TomlStringFrom(Save.Settings));
         }
 
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        private void RegisterGameObject()
         {
-            if (sceneName == "GameMain")
+            ClassInjector.RegisterTypeInIl2Cpp<Indicator>();
+            GameObject gameObject = new GameObject("Indicator");
+            UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            gameObject.AddComponent<Indicator>();
+        }
+
+        private void Reset()
+        {
+            Indicator.GreatNum = 0;
+            Indicator.CurrentMissNum = 0;
+            Indicator.MissNum = 0;
+            Indicator.GhostMiss = 0;
+            Indicator.CollectableNoteMiss = 0;
+            Fonts.UnloadFonts();
+        }
+
+        private void DisableToggle(int listIndex, int index, bool isOn)
+        {
+            if (listIndex == 0 && index == 0 && isOn)
             {
-                ClassInjector.RegisterTypeInIl2Cpp<Indicator>();
-                GameObject gameObject = new GameObject("Indicator");
-                Object.DontDestroyOnLoad(gameObject);
-                gameObject.AddComponent<Indicator>();
+                Patch.FC_APToggle.SetActive(true);
             }
             else
             {
-                Indicator.ObjectDisabled = false;
-                Indicator.GreatNum = 0;
-                Indicator.CurrentMissNum = 0;
-                Indicator.MissNum = 0;
-                Indicator.GhostMiss = 0;
-                Indicator.CollectableNoteMiss = 0;
-                UICreate.UnloadFonts();
-            }
-        }
-
-        public override void OnUpdate()
-        {
-            if (!GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
-            {
                 Patch.FC_APToggle.SetActive(false);
-                Patch.ChartReviewToggle.SetActive(false);
-            }
-            else if (GameObject.Find("PnlOption") && Patch.FC_APToggle != null)
-            {
-                Patch.FC_APToggle.SetActive(true);
-                Patch.ChartReviewToggle.SetActive(true);
             }
         }
     }

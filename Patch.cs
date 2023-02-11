@@ -4,7 +4,7 @@ using Assets.Scripts.UI.Panels;
 using FormulaBase;
 using GameLogic;
 using HarmonyLib;
-using MuseDashMirror;
+using MuseDashMirror.UICreate;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,27 +13,16 @@ namespace FC_AP
     internal static class Patch
     {
         internal static GameObject FC_APToggle { get; set; }
-        internal static GameObject ChartReviewToggle { get; set; }
 
-        internal static void Init()
-        {
-            CommonPatchs.PnlMenuPatch(typeof(Patch), "PnlMenuPostfix");
-            CommonPatchs.SwitchLanguagesPatch(typeof(Patch), "SwitchLanguagesPostfix");
-        }
-
-        public static unsafe void SwitchLanguagesPostfix()
+        internal static unsafe void SwitchLanguagesPostfix()
         {
             fixed (bool* fc_apEnabled = &Save.Settings.FC_APEnabled)
             {
                 FC_APToggle.transform.Find("Txt").GetComponent<Text>().text = "FC/AP On/Off";
             }
-            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
-            {
-                ChartReviewToggle.transform.Find("Txt").GetComponent<Text>().text = "Chart Review On/Off";
-            }
         }
 
-        public static unsafe void PnlMenuPostfix(PnlMenu __instance)
+        internal static unsafe void PnlMenuPostfix(PnlMenu __instance)
         {
             GameObject vSelect = null;
             foreach (Il2CppSystem.Object @object in __instance.transform.parent.parent.Find("Forward"))
@@ -48,14 +37,7 @@ namespace FC_AP
             {
                 if (FC_APToggle == null && vSelect != null)
                 {
-                    FC_APToggle = UICreate.CreatePnlMenuToggle("FC AP Indicator Toggle", new Vector3(-6.8f, -2.65f, 100f), fc_apEnabled, "FC/AP On/Off");
-                }
-            }
-            fixed (bool* chartReviewEnabled = &Save.Settings.ChartReviewEnabled)
-            {
-                if (ChartReviewToggle == null && vSelect != null)
-                {
-                    ChartReviewToggle = UICreate.CreatePnlMenuToggle("Chart Review Toggle", new Vector3(-6.8f, -3.55f, 100f), chartReviewEnabled, "Chart Review On/Off");
+                    FC_APToggle = ToggleCreate.CreatePnlMenuToggle("FC AP Indicator Toggle", new Vector3(-6.8f, -2.65f, 100f), fc_apEnabled, "FC/AP On/Off");
                 }
             }
         }
