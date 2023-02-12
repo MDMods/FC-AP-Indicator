@@ -37,7 +37,7 @@ namespace FC_AP
             {
                 if (FC_APToggle == null && vSelect != null)
                 {
-                    FC_APToggle = ToggleCreate.CreatePnlMenuToggle("FC AP Indicator Toggle", new Vector3(-6.8f, -2.65f, 100f), fc_apEnabled, "FC/AP On/Off");
+                    FC_APToggle = ToggleCreate.CreatePnlMenuToggle("FC AP Indicator Toggle", fc_apEnabled, "FC/AP On/Off");
                 }
             }
         }
