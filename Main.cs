@@ -19,7 +19,7 @@ public class Main : MelonMod
         SwitchLanguagesEvent += Patch.SwitchLanguagesPostfix;
         MenuSelectEvent += DisableToggle;
         EnterGameScene += RegisterGameObject;
-        GameStartEvent += SetAPToggle;
+        GameStartEvent += SetAP;
         OnVictoryEvent += DestroyGameObject;
         AddScoreEvent += UpdateFCGameObject;
         MissCubeEvent += UpdateMissGameObject;

@@ -32,11 +32,6 @@ internal class Indicator : MonoBehaviour
         UnloadFonts();
     }
 
-    internal static void SetAPToggle()
-    {
-        CreateCanvas("Indicator Canvas", "Camera_2D");
-        AP = SetGameObject("AP", Color.yellow, "AP");
-    }
 
     internal static void UpdateFCGameObject()
     {
@@ -46,9 +41,10 @@ internal class Indicator : MonoBehaviour
         // if has miss, don't need update FC
         if (TotalMissNum != 0) return;
 
+        Destroy(AP);
+
         if (FC is null)
         {
-            Destroy(AP);
             FC = SetGameObject("FC", Blue, "FC " + GreatNum + "G");
         }
         else
@@ -66,7 +62,7 @@ internal class Indicator : MonoBehaviour
         Destroy(FC);
 
         int currentMiss;
-        // if collectable note not count as miss and FC is null
+        // if collectable note not count as miss and Miss is null
         if (!Save.Settings.CollectableMissEnabled && CollectableNoteMissNum != 0)
         {
             currentMiss = NormalMissNum + GhostMissNum;
@@ -74,7 +70,7 @@ internal class Indicator : MonoBehaviour
                 FC = SetFC();
         }
 
-        // if collectable note not count as miss and FC is null
+        // if collectable note not count as miss and Miss is null
         else if (!Save.Settings.GhostMissEnabled && GhostMissNum != 0)
         {
             currentMiss = NormalMissNum + CollectableNoteMissNum;
@@ -82,7 +78,7 @@ internal class Indicator : MonoBehaviour
                 FC = SetFC();
         }
 
-        // if collectable note and ghost not count as miss and FC is null
+        // if collectable note and ghost not count as miss and Miss is null
         else if (!Save.Settings.CollectableMissEnabled && CollectableNoteMissNum != 0 && !Save.Settings.GhostMissEnabled && GhostMissNum != 0)
         {
             currentMiss = NormalMissNum;
@@ -107,6 +103,12 @@ internal class Indicator : MonoBehaviour
         {
             Miss.GetComponent<Text>().text = GreatNum == 0 ? currentMiss + "M" : currentMiss + "M " + GreatNum + "G";
         }
+    }
+
+    internal static void SetAP()
+    {
+        CreateCanvas("Indicator Canvas", "Camera_2D");
+        AP = SetGameObject("AP", Color.yellow, "AP");
     }
 
     private static GameObject SetFC()
