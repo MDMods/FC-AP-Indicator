@@ -21,9 +21,9 @@ internal class Indicator : MonoBehaviour
 
     private void OnDestroy()
     {
-        AP = null;
-        FC = null;
-        Miss = null;
+        AP = default;
+        FC = default;
+        Miss = default;
     }
 
 

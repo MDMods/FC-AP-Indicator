@@ -17,8 +17,8 @@ internal static class Save
             File.WriteAllText(Path.Combine("UserData", "FC AP.cfg"), defaultConfig);
         }
 
-        var datas = File.ReadAllText(Path.Combine("UserData", "FC AP.cfg"));
-        Settings = TomletMain.To<Data>(datas);
+        var data = File.ReadAllText(Path.Combine("UserData", "FC AP.cfg"));
+        Settings = TomletMain.To<Data>(data);
     }
 }
 
