@@ -19,17 +19,11 @@ internal class Indicator : MonoBehaviour
     private static GameObject FC { get; set; }
     private static GameObject Miss { get; set; }
 
-    private void Start()
-    {
-        LoadFonts();
-    }
-
     private void OnDestroy()
     {
         AP = null;
         FC = null;
         Miss = null;
-        UnloadFonts();
     }
 
 
