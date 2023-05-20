@@ -2,15 +2,11 @@
 
 internal static class MelonBuildInfo
 {
-    public const string Name = "FC AP indicator";
+    internal const string Name = "FC AP indicator";
 
-    public const string Description = "Indicators for whether you are on FC/AP pace";
+    internal const string Description = "Indicators for whether you are on FC/AP pace";
 
-    public const string Author = "lxy";
+    internal const string Author = "lxy";
 
-    public const string Company = null;
-
-    public const string Version = "1.6.0";
-
-    public const string DownloadLink = "https://github.com/MDModsDev/FC-AP-Indicator/releases/latest";
+    internal const string Version = "1.7.0";
 }

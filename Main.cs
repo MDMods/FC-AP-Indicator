@@ -21,8 +21,7 @@ public class Main : MelonMod
         EnterGameScene += RegisterGameObject;
         GameStartEvent += SetAP;
         OnVictoryEvent += DestroyGameObject;
-        AddScoreEvent += UpdateFCGameObject;
-        MissCubeEvent += UpdateMissGameObject;
+        MissCubeEvent += UpdateIndicator;
         LoggerInstance.Msg("FC/AP indicator is loaded!");
     }
 
@@ -31,23 +30,19 @@ public class Main : MelonMod
         File.WriteAllText(Path.Combine("UserData", "FC AP.cfg"), TomletMain.TomlStringFrom(Save.Settings));
     }
 
-    private void RegisterGameObject()
+    private static void RegisterGameObject()
     {
-        if (!Save.Settings.FC_APEnabled) return;
+        if (!Save.Settings.IndicatorEnabled) return;
         ClassInjector.RegisterTypeInIl2Cpp<Indicator>();
         var gameObject = new GameObject("Indicator");
         gameObject.AddComponent<Indicator>();
     }
 
-    private void DisableToggle(int listIndex, int index, bool isOn)
+    private static void DisableToggle(int listIndex, int index, bool isOn)
     {
         if (listIndex == 0 && index == 0 && isOn)
-        {
-            Patch.FC_APToggle.SetActive(true);
-        }
+            Patch.IndicatorToggle.SetActive(true);
         else
-        {
-            Patch.FC_APToggle.SetActive(false);
-        }
+            Patch.IndicatorToggle.SetActive(false);
     }
 }

@@ -6,37 +6,48 @@ namespace FC_AP;
 
 internal static class Save
 {
-    private static readonly Data Default = new(true, true, true);
-    internal static Data Settings;
+    internal static Data Settings { get; private set; }
 
     public static void Load()
     {
         if (!File.Exists(Path.Combine("UserData", "FC AP.cfg")))
         {
-            var defaultConfig = TomletMain.TomlStringFrom(Default);
+            var defaultConfig = TomletMain.TomlStringFrom(new Data(true, true, true));
             File.WriteAllText(Path.Combine("UserData", "FC AP.cfg"), defaultConfig);
         }
 
         var data = File.ReadAllText(Path.Combine("UserData", "FC AP.cfg"));
-        Settings = TomletMain.To<Data>(data);
+        try
+        {
+            Settings = TomletMain.To<Data>(data);
+        }
+        catch
+        {
+            File.Delete(Path.Combine("UserData", "FC AP.cfg"));
+            Load();
+        }
     }
 }
 
-internal struct Data
+public class Data
 {
-    [TomlPrecedingComment("Whether the FC AP indicator is enabled")]
-    internal bool FC_APEnabled;
+    [TomlPrecedingComment("Whether delete FC indicator when missing a collectable notes")]
+    internal readonly bool CollectableMissEnabled;
 
     [TomlPrecedingComment("Whether delete FC indicator when missing a ghost")]
-    internal bool GhostMissEnabled;
+    internal readonly bool GhostMissEnabled;
 
-    [TomlPrecedingComment("Whether delete FC indicator when missing a collectable notes")]
-    internal bool CollectableMissEnabled;
+    [TomlPrecedingComment("Whether the FC AP indicator is enabled")]
+    internal bool IndicatorEnabled;
 
-    internal Data(bool fc_apEnabled, bool ghostMissEnabled, bool collectableMissEnabled)
+    public Data()
     {
-        FC_APEnabled = fc_apEnabled;
-        GhostMissEnabled = ghostMissEnabled;
+    }
+
+    internal Data(bool ghostMissEnabled, bool collectableMissEnabled, bool indicatorEnabled)
+    {
         CollectableMissEnabled = collectableMissEnabled;
+        GhostMissEnabled = ghostMissEnabled;
+        IndicatorEnabled = indicatorEnabled;
     }
 }
